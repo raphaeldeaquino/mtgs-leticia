@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <title>{% block title %} {% endblock %}</title>
+
+    <!-- Favicons -->
+    <link href="{{url_for('static', filename='img/favicon.png')}}" rel="icon">
+    <link href="{{url_for('static', filename='img/apple-touch-icon.png')}}" rel="apple-touch-icon">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link href="{{url_for('static', filename='vendor/aos/aos.css')}}" rel="stylesheet">
+    <link href="{{url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css')}}" rel="stylesheet">
+    <link href="{{url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.css')}}" rel="stylesheet">
+    <link href="{{url_for('static', filename='vendor/boxicons/css/boxicons.min.css')}}" rel="stylesheet">
+    <link href="{{url_for('static', filename='vendor/glightbox/css/glightbox.min.css')}}" rel="stylesheet">
+    <link href="{{url_for('static', filename='vendor/swiper/swiper-bundle.min.css')}}" rel="stylesheet">
+
+    <!-- Template Main CSS File -->
+    <link href="{{url_for('static', filename='css/style.css')}}" rel="stylesheet">
+
+</head>
+<body>
+    <i class="bi bi-list mobile-nav-toggle d-lg-none"></i>
+
+    {% set navigation_bar = [
+    ('/', 'index', 'Home', 'bx-home'),
+    ('/sobre', 'about', 'Sobre', 'bx-user'),
+    ('/inputs', 'inputs', 'Análise de viabilidade', 'bx-money'),
+    ('#portfolio', 'portfolio', 'About', 'bx-book-content'),
+    ('#services', 'services', 'About', 'bx-server'),
+    ('#contact', 'contact', 'Contato', 'bx-envelope')
+    ] -%}
+
+    {% set active_page = active_page|default('index') -%}
+
+    <!-- ======= Header ======= -->
+    <header id="header" class="d-flex flex-column justify-content-center">
+        <nav id="navbar" class="navbar nav-menu">
+            <ul>
+                {% for href, id, caption, icon in navigation_bar %}
+                <li><a href="{{ href|e }}" class="nav-link scrollto {% if id == active_page %} active{% endif
+    %}"><i class="bx {{ icon|e }}"></i> <span>{{ caption|e }}</span></a></li>
+                {% endfor %}
+            </ul>
+        </nav><!-- .nav-menu -->
+    </header><!-- End Header -->
+    {% block content %} {% endblock %}
+</body>
+</html>
