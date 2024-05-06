@@ -25,6 +25,9 @@
     <!-- Template Main CSS File -->
     <link href="{{url_for('static', filename='css/style.css')}}" rel="stylesheet">
 
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/dataTables.bootstrap5.css">
+
 </head>
 <body>
     <i class="bi bi-list mobile-nav-toggle d-lg-none"></i>
@@ -32,7 +35,7 @@
     {% set navigation_bar = [
     ('/', 'index', 'Home', 'bx-home'),
     ('/sobre', 'about', 'Sobre', 'bx-user'),
-    ('/inputs', 'inputs', 'Análise de viabilidade', 'bx-money'),
+    ('/viabilidade', 'viability', 'Análise de viabilidade', 'bx-money'),
     ('#portfolio', 'portfolio', 'About', 'bx-book-content'),
     ('#services', 'services', 'About', 'bx-server'),
     ('#contact', 'contact', 'Contato', 'bx-envelope')
@@ -51,6 +54,15 @@
             </ul>
         </nav><!-- .nav-menu -->
     </header><!-- End Header -->
+
+    <!-- Inclua o Chart.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <!-- Inclua o plugin Chart.js datalabels -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.0.0/chartjs-plugin-datalabels.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap5.js"></script>
+
     {% block content %} {% endblock %}
 </body>
 </html>

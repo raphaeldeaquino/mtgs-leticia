@@ -13,8 +13,8 @@ def create_app(config_class=Config):
     from MobPowerEcon.main import bp as main_bp
     app.register_blueprint(main_bp)
 
-    from MobPowerEcon.inputs import bp as inputs_bp
-    app.register_blueprint(inputs_bp, url_prefix='/inputs')
+    from MobPowerEcon.viability import bp as inputs_bp
+    app.register_blueprint(inputs_bp, url_prefix='/viabilidade')
 
     from MobPowerEcon.about import bp as about_bp
     app.register_blueprint(about_bp, url_prefix='/sobre')

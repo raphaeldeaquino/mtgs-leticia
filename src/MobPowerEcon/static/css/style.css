@@ -300,15 +300,6 @@ h6 {
   font-weight: 700;
 }
 
-#hero p {
-  margin: 15px 0 0 0;
-  font-size: 26px;
-  font-family: "Poppins", sans-serif;
-}
-
-#hero p span {
-  letter-spacing: 1px;
-}
 
 #hero .social-links {
   margin-top: 30px;
@@ -1212,7 +1203,7 @@ section {
 .form_wrapper {
 			 background: #fff;
 			 height: 100%;
-			 width: 1000px;
+			 width: 1300px;
 			 max-width: 100%;
 			 box-sizing: border-box;
 			 padding: 25px;
@@ -1366,6 +1357,12 @@ section {
 		}
 		 .form_container .row .col_half.last {
 			 border-left: 1px solid #ccc;
+		}
+
+		.form_container p {
+			 font-size: 1.0em;
+			 line-height: 1.5em;
+			 margin: 0;
 		}
 
 		@media (max-width: 600px) {
