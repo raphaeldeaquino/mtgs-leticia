@@ -2,25 +2,17 @@ from flask import Flask
 
 from .config import Config
 
+app = Flask(__name__)
+app.config.from_object(Config)
 
-def create_app(config_class=Config):
-    app = Flask(__name__)
-    app.config.from_object(config_class)
+# Initialize Flask extensions here
 
-    # Initialize Flask extensions here
+# Register blueprints here
+from MobPowerEcon.main import bp as main_bp
+app.register_blueprint(main_bp)
 
-    # Register blueprints here
-    from MobPowerEcon.main import bp as main_bp
-    app.register_blueprint(main_bp)
+from MobPowerEcon.viability import bp as inputs_bp
+app.register_blueprint(inputs_bp, url_prefix='/viabilidade')
 
-    from MobPowerEcon.viability import bp as inputs_bp
-    app.register_blueprint(inputs_bp, url_prefix='/viabilidade')
-
-    from MobPowerEcon.about import bp as about_bp
-    app.register_blueprint(about_bp, url_prefix='/sobre')
-
-    @app.route('/test/')
-    def test_page():
-        return '<h1>Testing the Flask Application Factory Pattern</h1>'
-
-    return app
+from MobPowerEcon.about import bp as about_bp
+app.register_blueprint(about_bp, url_prefix='/sobre')
