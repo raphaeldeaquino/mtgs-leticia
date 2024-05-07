@@ -10,12 +10,17 @@
                     <h2>Resultado da análise de viabilidade</h2>
                 </div>
                 <p style="padding-top:20px"><b>Opção selecionada:</b> {{ result['opcao'] }}</p>
-                <p><b>Demanda dos eletropostos:</b></p>
-                <ul>
-                    {% for indice in range(result['Demanda dos eletropostos']|length) %}
-                        <li>Ano {{ indice + 1 }}: {{ result['Demanda dos eletropostos'][indice] }} kWh</li>
-                    {% endfor %}
-                </ul>
+                {% if result['opcao'] == 'Análise de sensibilidade do valor da recarga' %}
+                    <p><b>Recarga por dia:</b> {{ result['Recarga por dia'] }} horas</p>
+                {% endif %}
+                {% if result['opcao'] == 'Sem análise de sensibilidade' or result['opcao'] == 'Análise de sensibilidade do valor da recarga' %}
+                    <p><b>Demanda dos eletropostos:</b></p>
+                    <ul>
+                        {% for indice in range(result['Demanda dos eletropostos']|length) %}
+                            <li>Ano {{ indice + 1 }}: {{ result['Demanda dos eletropostos'][indice] }} kWh</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
                 <div class="row clearfix">
                     <div class="col_half">
                         <p><b>Geração fotovoltaica:</b></p>
@@ -30,36 +35,32 @@
                     </div>
                 </div>
                 <p><b>Valor residual do sistema fotovoltaico:</b> R$ {{ result['Valor residual FV'] }}</p>
-                <div class="row clearfix">
-                    <div class="col_half">
-                        <p><b>Faturas da concessionária:</b></p>
-                        <ul>
-                            {% for indice in range(result['Faturas concessionária']|length) %}
-                                <li>Ano {{ indice + 1 }}: R$ {{ result['Faturas concessionária'][indice] }}</li>
-                            {% endfor %}
-                        </ul>
+                {% if result['opcao'] == 'Sem análise de sensibilidade' or result['opcao'] == 'Análise de sensibilidade do valor da recarga' %}
+                    <div class="row clearfix">
+                        <div class="col_half">
+                            <p><b>Faturas da concessionária:</b></p>
+                            <ul>
+                                {% for indice in range(result['Faturas concessionária']|length) %}
+                                    <li>Ano {{ indice + 1 }}: R$ {{ result['Faturas concessionária'][indice] }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <div class="col_half">
+                            <p><b>Abatimento de energia:</b></p>
+                            <ul>
+                                {% for indice in range(result['Abatimento de energia']|length) %}
+                                    <li>Ano {{ indice + 1 }}: {{ result['Abatimento de energia'][indice] }} kWh</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
                     </div>
-                    <div class="col_half">
-                        <p><b>Abatimento de energia:</b></p>
-                        <ul>
-                            {% for indice in range(result['Abatimento de energia']|length) %}
-                                <li>Ano {{ indice + 1 }}: {{ result['Abatimento de energia'][indice] }} kWh</li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                </div>
-                <p><b>Créditos restantes:</b></p>
-                <ul>
-                    {% for indice in range(result['Créditos restantes']|length) %}
-                        <li>Ano {{ indice + 1 }}: {{ result['Créditos restantes'][indice] }} kWh</li>
-                    {% endfor %}
-                </ul>
-                <p><b>Créditos restantes:</b></p>
-                <ul>
-                    {% for indice in range(result['Créditos restantes']|length) %}
-                        <li>Ano {{ indice + 1 }}: {{ result['Créditos restantes'][indice] }} kWh</li>
-                    {% endfor %}
-                </ul>
+                    <p><b>Créditos restantes:</b></p>
+                    <ul>
+                        {% for indice in range(result['Créditos restantes']|length) %}
+                            <li>Ano {{ indice + 1 }}: {{ result['Créditos restantes'][indice] }} kWh</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
                 <div class="row clearfix">
                     <div class="col_half">
                         <p><b>Prestações de financiamento:</b></p>
@@ -89,49 +90,55 @@
                         </div>
                     </div>
                 {% endif %}
-                <p><b>Resultado final do fluxo de caixa:</b></p>
-                <table id="data" class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Anos</th>
-                            <th>Receita Bruta (+)</th>
-                            <th>Imposto Simples Nacional (-)</th>
-                            <th>Fatura de energia (-)</th>
-                            <th>O&M (-)</th>
-                            <th>Aluguel (-)</th>
-                            <th>Financiamento (-)</th>
-                            <th>Fluxo de Caixa (=)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for indice in range(result['anos']|length) %}
+                {% if result['opcao'] == 'Sem análise de sensibilidade' %}
+                    <p><b>Resultado final do fluxo de caixa:</b></p>
+                    <table id="data" class="table table-striped">
+                        <thead>
                             <tr>
-                                <td>{{ result['anos'][indice] }}</td>
-                                <td><font color="blue">R$ {{ result['Receita Bruta'][indice] }}</font></td>
-                                <td><font color="red">R$ {{ result['Imposto Simples Nacional'][indice] }}</font></td>
-                                <td><font color="red">R$ {{ result['Fatura de energia'][indice] }}</font></td>
-                                <td><font color="red">R$ {{ result['O&M'][indice] }}</font></td>
-                                <td><font color="red">R$ {{ result['Aluguel'][indice] }}</font></td>
-                                <td><font color="red">R$ {{ result['Financiamento'][indice] }}</font></td>
-                                {% if result['Fluxo de Caixa'][indice][0] == '-' %}
-                                    <td><font color="red">R$ {{ result['Fluxo de Caixa'][indice] }}</font></td>
-                                {% else %}
-                                    <td><font color="blue">R$ {{ result['Fluxo de Caixa'][indice] }}</font></td>
-                                {% endif %}
+                                <th>Anos</th>
+                                <th>Receita Bruta (+)</th>
+                                <th>Imposto Simples Nacional (-)</th>
+                                <th>Fatura de energia (-)</th>
+                                <th>O&M (-)</th>
+                                <th>Aluguel (-)</th>
+                                <th>Financiamento (-)</th>
+                                <th>Fluxo de Caixa (=)</th>
                             </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-                <p><b>Investimento inicial:</b> R$ {{ result['Investimento inicial'] }}</p>
-                <p><b>Valor financiado:</b> R$ {{ result['Valor financiado'] }}</p>
-                <p style="padding-top:30px"><b>Indicadores Econômicos</b></p>
-                <p><b>VPL:</b> R$ {{ result['VPL'] }}</p>
-                <p><b>TIR:</b> {{ result['TIR'] }} %</p>
-                {% if 'Payback Descontado' in result %}
-                    <p><b>Payback Descontado:</b> {{ result['Payback Descontado'] }} anos</p>
-                {% else %}
-                    <p>O payback descontado não foi atingido.</p>
+                        </thead>
+                        <tbody>
+                            {% for indice in range(result['anos']|length) %}
+                                <tr>
+                                    <td>{{ result['anos'][indice] }}</td>
+                                    <td><font color="blue">R$ {{ result['Receita Bruta'][indice] }}</font></td>
+                                    <td><font color="red">R$ {{ result['Imposto Simples Nacional'][indice] }}</font></td>
+                                    <td><font color="red">R$ {{ result['Fatura de energia'][indice] }}</font></td>
+                                    <td><font color="red">R$ {{ result['O&M'][indice] }}</font></td>
+                                    <td><font color="red">R$ {{ result['Aluguel'][indice] }}</font></td>
+                                    <td><font color="red">R$ {{ result['Financiamento'][indice] }}</font></td>
+                                    {% if result['Fluxo de Caixa'][indice][0] == '-' %}
+                                        <td><font color="red">R$ {{ result['Fluxo de Caixa'][indice] }}</font></td>
+                                    {% else %}
+                                        <td><font color="blue">R$ {{ result['Fluxo de Caixa'][indice] }}</font></td>
+                                    {% endif %}
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <p><b>Investimento inicial:</b> R$ {{ result['Investimento inicial'] }}</p>
+                    <p><b>Valor financiado:</b> R$ {{ result['Valor financiado'] }}</p>
+                    <p style="padding-top:30px"><b>Indicadores Econômicos</b></p>
+                    <p><b>VPL:</b> R$ {{ result['VPL'] }}</p>
+                    <p><b>TIR:</b> {{ result['TIR'] }} %</p>
+                    {% if 'Payback Descontado' in result %}
+                        <p><b>Payback Descontado:</b> {{ result['Payback Descontado'] }} anos</p>
+                    {% else %}
+                        <p>O payback descontado não foi atingido.</p>
+                    {% endif %}
                 {% endif %}
+                {% if result['opcao'] == 'Análise de sensibilidade do valor da recarga' or result['opcao'] == 'Análise de sensibilidade da recarga por dia' %}
+                    <canvas id="grafico3"></canvas>
+                {% endif %}
+
 
             </div>
         </div>
@@ -152,21 +159,22 @@ var config1 = {
             data: dados.geracoes,
             backgroundColor: 'rgba(20, 180, 50, 0.8)',
             borderColor: 'rgba(47, 158, 65, 1)',
-            borderWidth: 1
+            borderWidth: 1,
+            label: "Geração",
         }]
     },
     options: {
+        plugins: {
+            title: {
+                display: true,
+                text: 'Geração Fotovoltaica ao Longo dos Anos',
+                font: {
+                    size: 16
+                }
+            },
+        },
         legend: {
             display: false
-        },
-        plugins: {
-            datalabels: {
-                display: true,
-                color: '#ffffff',
-                formatter: function(value, context) {
-                    return value.toFixed(2);
-                }
-            }
         },
         tooltips: {
             callbacks: {
@@ -176,23 +184,19 @@ var config1 = {
                 }
             }
         },
-        title: {
-            display: true,
-            text: 'Geração Fotovoltaica ao Longo dos Anos'
-        },
         scales: {
-            yAxes: [{
-                scaleLabel: {
+            y: {
+                title: {
                     display: true,
-                    labelString: 'Geração (kWh)'
+                    text: 'Geração (kWh)'
                 }
-            }],
-            xAxes: [{
-                scaleLabel: {
+            },
+            x: {
+                title: {
                     display: true,
-                    labelString: 'Ano'
+                    text: 'Ano'
                 }
-            }]
+            }
         }
     }
 };
@@ -220,27 +224,32 @@ var config2 = {
         }]
     },
     options: {
-        title: {
-            display: true,
-            text: 'Financiamento'
+        plugins: {
+            title: {
+                display: true,
+                text: 'Financiamento',
+                font: {
+                    size: 16
+                }
+            },
         },
         hover: {
             mode: 'index',
             intersect: true
         },
         scales: {
-            yAxes: [{
-                scaleLabel: {
+            y: {
+                title: {
                     display: true,
-                    labelString: 'Valor (R$)'
+                    text: 'Valor (R$)'
                 }
-            }],
-            xAxes: [{
-                scaleLabel: {
+            },
+            x: {
+                title: {
                     display: true,
-                    labelString: 'Mês'
+                    text: 'Mês'
                 }
-            }]
+            }
         }
     }
 };
@@ -254,6 +263,58 @@ var ctx2 = document.getElementById("grafico2");
 console.log(ctx2);
 var myChart2 = new Chart(ctx2, config2);
 console.log(myChart2);
+
+if (dados['opcao'] == 'Análise de sensibilidade do valor da recarga' || dados['opcao'] == 'Análise de sensibilidade da recarga por dia') {
+    var config3 = {
+        type: 'line',
+        data: {
+            labels: dados.valor_recarga_range,
+            datasets: [{
+                data: dados.vpl_positivo,
+                label: "Viabilidade (VPL >= 0)",
+                borderColor: "#5fa2e0",
+                fill: false
+            }, {
+                data: dados.vpl_negativo,
+                label: "Inviabilidade (VPL < 0)",
+                borderColor: "#cd3e3e",
+                fill: false
+            }]
+        },
+        options: {
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Análise de Sensibilidade do VPL',
+                    font: {
+                        size: 16
+                    }
+                },
+            },
+            hover: {
+                mode: 'index',
+                intersect: true
+            },
+            scales: {
+                y: {
+                    title: {
+                        display: true,
+                        text: 'VPL (R$)'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Valor de Recarga (R$)'
+                    },
+                }
+            }
+        }
+    };
+
+    var ctx3 = document.getElementById("grafico3");
+    var myChart3 = new Chart(ctx3, config3);
+}
 
 
 </script>

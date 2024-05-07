@@ -16,3 +16,6 @@ app.register_blueprint(inputs_bp, url_prefix='/viabilidade')
 
 from MobPowerEcon.about import bp as about_bp
 app.register_blueprint(about_bp, url_prefix='/sobre')
+
+from MobPowerEcon.contact import bp as contact_bp
+app.register_blueprint(contact_bp, url_prefix='/contato')

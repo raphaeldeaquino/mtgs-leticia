@@ -17,25 +17,25 @@
                             </div>
                             <div class="row clearfix">
                                 <div class="col_half">
-                                    <div class="input_field"><span><i aria-hidden="true"
+                                    <div class="input_field" data-tip="Número de eletropostos"><span><i aria-hidden="true"
                                                                       class="fas fa-gas-pump"></i></span>
                                         <input type="number" name="num_eletropostos" min="1" step="1"
-                                               placeholder="Número de eletropostos - Padrão: 4"/>
+                                               placeholder="Número de eletropostos - Default: 4"/>
                                     </div>
                                 </div>
                                 <div class="col_half">
-                                    <div class="input_field"><span><i aria-hidden="true"
+                                    <div class="input_field" data-tip="Potência do eletroposto (kW)"><span><i aria-hidden="true"
                                                                       class="fa-solid fa-bolt"></i></span>
                                         <input type="number" min="0" name="pot_eletroposto" step=".1"
-                                               placeholder="Potência do eletroposto (kW) - Padrão: 22 kW"/>
+                                               placeholder="Potência do eletroposto (kW) - Default: 22 kW"/>
                                     </div>
                                 </div>
                             </div>
                             <div class="row clearfix">
                                 <div class="col_half">
-                                    <div class="input_field"><span><i aria-hidden="true" class="fa-solid fa-clock"></i></span>
+                                    <div class="input_field" data-tip="Recarga (h/dia)"><span><i aria-hidden="true" class="fa-solid fa-clock"></i></span>
                                         <input type="number" min="0" max="24" name="recarga_dia" step="1"
-                                               placeholder="Recarga (h/dia) - Padrão: 6 h"/>
+                                               placeholder="Recarga (h/dia) - Default: 6 h"/>
                                     </div>
                                 </div>
                             </div>
@@ -44,32 +44,32 @@
                             </div>
                             <div class="row clearfix">
                                 <div class="col_half">
-                                    <div class="input_field"><span><i aria-hidden="true"
+                                    <div class="input_field" data-tip="Potência do sistema fotovoltaico (kW)"><span><i aria-hidden="true"
                                                                       class="fa-solid fa-solar-panel"></i></span>
                                         <input type="number" name="pot_fv" min="0" step=".1"
-                                               placeholder="Potência do sistema fotovoltaico (kW) - Padrão: 125 kW"/>
+                                               placeholder="Potência do sistema fotovoltaico (kW) - Default: 125 kW"/>
                                     </div>
                                 </div>
                                 <div class="col_half">
-                                    <div class="input_field"><span><i aria-hidden="true" class="fa-solid fa-clock"></i></span>
+                                    <div class="input_field" data-tip="Horas de irradiação solar média por dia"><span><i aria-hidden="true" class="fa-solid fa-clock"></i></span>
                                         <input type="number" min="0" name="h_inc" step=".01"
-                                               placeholder="Horas de irradiação solar média por dia - Padrão: 5.45"/>
+                                               placeholder="Horas de irradiação solar média por dia - Default: 5.45"/>
                                     </div>
                                 </div>
                             </div>
                             <div class="row clearfix">
                                 <div class="col_half">
-                                    <div class="input_field"><span><i aria-hidden="true"
+                                    <div class="input_field" data-tip="Performance ratio"><span><i aria-hidden="true"
                                                                       class="fa-solid fa-chart-simple"></i></span>
                                         <input type="number" name="pr" min="0" max="1" step=".01"
-                                               placeholder="Performance ratio - Padrão: 0.80"/>
+                                               placeholder="Performance ratio - Default: 0.80"/>
                                     </div>
                                 </div>
                                 <div class="col_half">
-                                    <div class="input_field"><span><i aria-hidden="true"
+                                    <div class="input_field" data-tip="Perda de eficiência anual do sistema (decimal)"><span><i aria-hidden="true"
                                                                       class="fa-solid fa-arrow-turn-down"></i></span>
                                         <input type="number" min="0" step=".001" name="perda_eficiencia_anual"
-                                               placeholder="Perda de eficiência anual do sistema (decimal) - Padrão: 0.016"/>
+                                               placeholder="Perda de eficiência anual do sistema (decimal) - Default: 0.016"/>
                                     </div>
                                 </div>
                             </div>
@@ -78,73 +78,73 @@
                             </div>
                             <div class="row clearfix">
                                 <div class="col_half">
-                                    <div class="input_field"><span><i aria-hidden="true"
+                                    <div class="input_field" data-tip="Preço de cada eletroposto (R$)"><span><i aria-hidden="true"
                                                                       class="fa-solid fa-dollar-sign"></i></span>
                                         <input type="number" name="preco_eletroposto" min="0" step="1000"
-                                               placeholder="Preço de cada eletroposto (R$) - Padrão: R$ 120.000,00"/>
+                                               placeholder="Preço de cada eletroposto (R$) - Default: R$ 120.000,00"/>
                                     </div>
                                 </div>
                                 <div class="col_half">
-                                    <div class="input_field"><span><i aria-hidden="true"
+                                    <div class="input_field" data-tip="Preço do sistema fotovoltaico (R$/kWp)"><span><i aria-hidden="true"
                                                                       class="fa-solid fa-dollar-sign"></i></span>
                                         <input type="number" min="0" step="100" name="preco_fv"
-                                               placeholder="Preço do sistema fotovoltaico (R$/kWp) - Padrão: R$ 5.000,00"/>
+                                               placeholder="Preço do sistema fotovoltaico (R$/kWp) - Default: R$ 5.000,00"/>
                                     </div>
                                 </div>
                             </div>
                             <div class="row clearfix">
                                 <div class="col_half">
-                                    <div class="input_field"><span><i aria-hidden="true"
+                                    <div class="input_field" data-tip="Outros custos de implantação (R$)"><span><i aria-hidden="true"
                                                                       class="fa-solid fa-dollar-sign"></i></span>
                                         <input type="number" name="implantacao" min="0" step="1000"
-                                               placeholder="Outros custos de implantação (R$) - Padrão: R$ 30.000,00"/>
+                                               placeholder="Outros custos de implantação (R$) - Default: R$ 30.000,00"/>
                                     </div>
                                 </div>
                                 <div class="col_half">
-                                    <div class="input_field"><span><i aria-hidden="true"
+                                    <div class="input_field" data-tip="Valor da operação por eletroposto (R$/ano)"><span><i aria-hidden="true"
                                                                       class="fa-solid fa-dollar-sign"></i></span>
                                         <input type="number" min="0" step="100" name="o_e_m"
-                                               placeholder="Valor da operação por eletroposto (R$/ano) - Padrão: R$ 10.000,00"/>
+                                               placeholder="Valor da operação por eletroposto (R$/ano) - Default: R$ 10.000,00"/>
                                     </div>
                                 </div>
                             </div>
                             <div class="row clearfix">
                                 <div class="col_half">
-                                    <div class="input_field"><span><i aria-hidden="true"
+                                    <div class="input_field" data-tip="Valor da recarga (R$/kWh)"><span><i aria-hidden="true"
                                                                       class="fa-solid fa-dollar-sign"></i></span>
                                         <input type="number" name="valor_recarga" min="0" step=".01"
-                                               placeholder="Valor da recarga (R$/kWh) - Padrão: R$ 2,00"/>
+                                               placeholder="Valor da recarga (R$/kWh) - Default: R$ 2,00"/>
                                     </div>
                                 </div>
                                 <div class="col_half">
-                                    <div class="input_field"><span><i aria-hidden="true"
+                                    <div class="input_field" data-tip="Valor da tarifa de energia com impostos (R$/kWh)"><span><i aria-hidden="true"
                                                                       class="fa-solid fa-dollar-sign"></i></span>
                                         <input type="number" min="0" step=".01" name="tarifa_energia"
-                                               placeholder="Valor da tarifa de energia com impostos (R$/kWh) - Padrão: R$ 0,90"/>
+                                               placeholder="Valor da tarifa de energia com impostos (R$/kWh) - Default: R$ 0,90"/>
                                     </div>
                                 </div>
                             </div>
                             <div class="row clearfix">
                                 <div class="col_half">
-                                    <div class="input_field"><span><i aria-hidden="true"
+                                    <div class="input_field" data-tip="Taxa Mínima de Atratividade"><span><i aria-hidden="true"
                                                                       class="fa-solid fa-landmark"></i></span>
                                         <input type="number" name="tma" min="0" step=".01"
-                                               placeholder="Taxa Mínima de Atratividade - Padrão: 0.1"/>
+                                               placeholder="Taxa Mínima de Atratividade - Default: 0.1"/>
                                     </div>
                                 </div>
                                 <div class="col_half">
-                                    <div class="input_field"><span><i aria-hidden="true" class="fa-solid fa-house"></i></span>
+                                    <div class="input_field" data-tip="Aluguel (R$/mês)"><span><i aria-hidden="true" class="fa-solid fa-house"></i></span>
                                         <input type="number" min="0" step="100" name="aluguel_mes"
-                                               placeholder="Aluguel (R$/mês) - Padrão: R$ 3.000,00"/>
+                                               placeholder="Aluguel (R$/mês) - Default: R$ 3.000,00"/>
                                     </div>
                                 </div>
                             </div>
                             <div class="row clearfix">
                                 <div class="col_half">
-                                    <div class="input_field"><span><i aria-hidden="true"
+                                    <div class="input_field" data-tip="Vida útil financeira do fluxo de caixa (anos)"><span><i aria-hidden="true"
                                                                       class="fa-solid fa-timeline"></i></span>
                                         <input type="number" name="vida_util" min="1" step="1"
-                                               placeholder="Vida útil financeira do fluxo de caixa (anos) - Padrão: 10 anos"/>
+                                               placeholder="Vida útil financeira do fluxo de caixa (anos) - Default: 10 anos"/>
                                     </div>
                                 </div>
                             </div>
@@ -153,14 +153,14 @@
                             </div>
                             <div class="row clearfix">
                                 <div class="col_half">
-                                    <div class="input_field"><span><i aria-hidden="true"
+                                    <div class="input_field" data-tip="Percentual a ser financiado de 0 a 100 (%)"><span><i aria-hidden="true"
                                                                       class="fa-solid fa-percent"></i></span>
                                         <input type="number" name="perc_finan" min="0" max="100" step="1"
                                                placeholder="Percentual a ser financiado de 0 a 100 (%)" required/>
                                     </div>
                                 </div>
                                 <div class="col_half">
-                                    <div class="input_field"><span><i aria-hidden="true"
+                                    <div class="input_field" data-tip="Número total de prestações (meses)"><span><i aria-hidden="true"
                                                                       class="fa-solid fa-calendar-days"></i></span>
                                         <input type="number" min="0" step="1" name="numero_prestacoes"
                                                placeholder="Número total de prestações (meses)" required/>
@@ -169,7 +169,7 @@
                             </div>
                             <div class="row clearfix">
                                 <div class="col_half">
-                                    <div class="input_field"><span><i aria-hidden="true"
+                                    <div class="input_field" data-tip="Taxa de juros anual (decimal)"><span><i aria-hidden="true"
                                                                       class="fa-solid fa-money-bill-trend-up"></i></span>
                                         <input type="number" name="taxa_juros_anual" min="0" step=".01"
                                                placeholder="Taxa de juros anual (decimal)" required/>
