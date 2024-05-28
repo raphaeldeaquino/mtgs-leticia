@@ -580,11 +580,11 @@ def calculate_viability(input_data, opcao_selecionada):
 
         # Encontrar o maior valor de VPL
         maior_vpl = vpl_pot_fv[posicao_max_vpl]
-        result["Valor ótimo do VPL em R$"] = maior_vpl
+        result["Valor ótimo do VPL em R$"] = format_two_digits(maior_vpl)
 
         # Encontrar a potência correspondente usando a posição encontrada
         potencia_correspondente = pot_fv_range[posicao_max_vpl]
-        result["Potência ótima do sistema fotovoltaico em kW"] = potencia_correspondente
+        result["Potência ótima do sistema fotovoltaico em kW"] = format_two_digits(potencia_correspondente)
 
         # Plotar os resultados da análise de sensibilidade
         # Dividir os dados em duas séries com base na condição VPL >= 0 e VPL < 0
@@ -599,7 +599,7 @@ def calculate_viability(input_data, opcao_selecionada):
                 vpl_negativo.append(vpl_valor)
 
         # Gerar as duas séries separadamente com cores diferentes
-        result['pot_fv_range'] = list(pot_fv_range)
+        result['pot_fv_range'] = list(map(format_two_digits, list(pot_fv_range)))
         result['vpl_positivo'] = vpl_positivo
         result['vpl_negativo'] = vpl_negativo
 

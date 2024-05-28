@@ -13,7 +13,9 @@
                 {% if result['opcao'] == 'Análise de sensibilidade do valor da recarga' %}
                     <p><b>Recarga por dia:</b> {{ result['Recarga por dia'] }} horas</p>
                 {% endif %}
-                {% if result['opcao'] == 'Sem análise de sensibilidade' or result['opcao'] == 'Análise de sensibilidade do valor da recarga' %}
+                {% if result['opcao'] == 'Sem análise de sensibilidade'
+                or result['opcao'] == 'Análise de sensibilidade do valor da recarga'
+                or result['opcao'] == 'Análise de sensibilidade da potência do sistema fotovoltaico' %}
                     <p><b>Demanda dos eletropostos:</b></p>
                     <ul>
                         {% for indice in range(result['Demanda dos eletropostos']|length) %}
@@ -21,6 +23,7 @@
                         {% endfor %}
                     </ul>
                 {% endif %}
+                {% if result['opcao'] != 'Análise de sensibilidade da potência do sistema fotovoltaico' %}
                 <div class="row clearfix">
                     <div class="col_half">
                         <p><b>Geração fotovoltaica:</b></p>
@@ -35,6 +38,7 @@
                     </div>
                 </div>
                 <p><b>Valor residual do sistema fotovoltaico:</b> R$ {{ result['Valor residual FV'] }}</p>
+                {% endif %}
                 {% if result['opcao'] == 'Sem análise de sensibilidade' or result['opcao'] == 'Análise de sensibilidade do valor da recarga' %}
                     <div class="row clearfix">
                         <div class="col_half">
@@ -61,6 +65,7 @@
                         {% endfor %}
                     </ul>
                 {% endif %}
+                {% if result['opcao'] != 'Análise de sensibilidade da potência do sistema fotovoltaico' %}
                 <div class="row clearfix">
                     <div class="col_half">
                         <p><b>Prestações de financiamento:</b></p>
@@ -89,6 +94,7 @@
                             {% endfor %}
                         </div>
                     </div>
+                {% endif %}
                 {% endif %}
                 {% if result['opcao'] == 'Sem análise de sensibilidade' %}
                     <p><b>Resultado final do fluxo de caixa:</b></p>
@@ -138,8 +144,11 @@
                 {% if result['opcao'] == 'Análise de sensibilidade do valor da recarga' or result['opcao'] == 'Análise de sensibilidade da recarga por dia' %}
                     <canvas id="grafico3"></canvas>
                 {% endif %}
-
-
+                {% if result['opcao'] == 'Análise de sensibilidade da potência do sistema fotovoltaico' %}
+                <p><b>Valor ótimo do VPL:</b> R$ {{ result['Valor ótimo do VPL em R$'] }}</p>
+                <p><b>Potência ótima do sistema fotovoltaico:</b> {{ result['Potência ótima do sistema fotovoltaico em kW'] }} kW</p>
+                <canvas id="grafico4"></canvas>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -150,119 +159,117 @@ var dados = {{ result|tojson }};
 
 console.log(dados);
 
-// Configuração do gráfico 1
-var config1 = {
-    type: 'bar',
-    data: {
-        labels: dados.anos,
-        datasets: [{
-            data: dados.geracoes,
-            backgroundColor: 'rgba(20, 180, 50, 0.8)',
-            borderColor: 'rgba(47, 158, 65, 1)',
-            borderWidth: 1,
-            label: "Geração",
-        }]
-    },
-    options: {
-        plugins: {
-            title: {
-                display: true,
-                text: 'Geração Fotovoltaica ao Longo dos Anos',
-                font: {
-                    size: 16
-                }
-            },
+if (dados['opcao'] != 'Análise de sensibilidade da potência do sistema fotovoltaico') {
+    // Configuração do gráfico 1
+    var config1 = {
+        type: 'bar',
+        data: {
+            labels: dados.anos,
+            datasets: [{
+                data: dados.geracoes,
+                backgroundColor: 'rgba(20, 180, 50, 0.8)',
+                borderColor: 'rgba(47, 158, 65, 1)',
+                borderWidth: 1,
+                label: "Geração",
+            }]
         },
-        legend: {
-            display: false
-        },
-        tooltips: {
-            callbacks: {
-                label: function(tooltipItem, data) {
-                    var value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
-                    return value.toFixed(2);
-                }
-            }
-        },
-        scales: {
-            y: {
+        options: {
+            plugins: {
                 title: {
                     display: true,
-                    text: 'Geração (kWh)'
+                    text: 'Geração Fotovoltaica ao Longo dos Anos',
+                    font: {
+                        size: 16
+                    }
+                },
+            },
+            legend: {
+                display: false
+            },
+            tooltips: {
+                callbacks: {
+                    label: function(tooltipItem, data) {
+                        var value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+                        return value.toFixed(2);
+                    }
                 }
             },
-            x: {
-                title: {
-                    display: true,
-                    text: 'Ano'
-                }
-            }
-        }
-    }
-};
-
-// Configuração do gráfico 2
-var config2 = {
-    type: 'line',
-    data: {
-        labels: dados.meses,
-        datasets: [{
-            data: dados.juros_mensais,
-            label: "Juros mensais",
-            borderColor: "#3e95cd",
-            fill: false
-        }, {
-            data: dados.amortizacao_mensal,
-            label: "Amortização mensal",
-            borderColor: "#8e5ea2",
-            fill: false
-        }, {
-            data: dados.prestacoes,
-            label: "Prestações",
-            borderColor: "#3cba9f",
-            fill: false
-        }]
-    },
-    options: {
-        plugins: {
-            title: {
-                display: true,
-                text: 'Financiamento',
-                font: {
-                    size: 16
-                }
-            },
-        },
-        hover: {
-            mode: 'index',
-            intersect: true
-        },
-        scales: {
-            y: {
-                title: {
-                    display: true,
-                    text: 'Valor (R$)'
-                }
-            },
-            x: {
-                title: {
-                    display: true,
-                    text: 'Mês'
+            scales: {
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Geração (kWh)'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Ano'
+                    }
                 }
             }
         }
-    }
-};
+    };
 
-// Renderizando o gráfico
-var ctx1 = document.getElementById("grafico1");
-console.log(ctx1);
-var myChart1 = new Chart(ctx1, config1);
-console.log(myChart1);
-var ctx2 = document.getElementById("grafico2");
-console.log(ctx2);
-var myChart2 = new Chart(ctx2, config2);
-console.log(myChart2);
+    // Configuração do gráfico 2
+    var config2 = {
+        type: 'line',
+        data: {
+            labels: dados.meses,
+            datasets: [{
+                data: dados.juros_mensais,
+                label: "Juros mensais",
+                borderColor: "#3e95cd",
+                fill: false
+            }, {
+                data: dados.amortizacao_mensal,
+                label: "Amortização mensal",
+                borderColor: "#8e5ea2",
+                fill: false
+            }, {
+                data: dados.prestacoes,
+                label: "Prestações",
+                borderColor: "#3cba9f",
+                fill: false
+            }]
+        },
+        options: {
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Financiamento',
+                    font: {
+                        size: 16
+                    }
+                },
+            },
+            hover: {
+                mode: 'index',
+                intersect: true
+            },
+            scales: {
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Valor (R$)'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Mês'
+                    }
+                }
+            }
+        }
+    };
+
+    // Renderizando o gráfico
+    var ctx1 = document.getElementById("grafico1");
+    var myChart1 = new Chart(ctx1, config1);
+    var ctx2 = document.getElementById("grafico2");
+    var myChart2 = new Chart(ctx2, config2);
+}
 
 if (dados['opcao'] == 'Análise de sensibilidade do valor da recarga' || dados['opcao'] == 'Análise de sensibilidade da recarga por dia') {
     var config3 = {
@@ -316,6 +323,57 @@ if (dados['opcao'] == 'Análise de sensibilidade do valor da recarga' || dados['
     var myChart3 = new Chart(ctx3, config3);
 }
 
+if (dados['opcao'] == 'Análise de sensibilidade da potência do sistema fotovoltaico') {
+    var config4 = {
+        type: 'line',
+        data: {
+            labels: dados.pot_fv_range,
+            datasets: [{
+                data: dados.vpl_positivo,
+                label: "Viabilidade (VPL >= 0)",
+                borderColor: "#5fa2e0",
+                fill: false
+            }, {
+                data: dados.vpl_negativo,
+                label: "Inviabilidade (VPL < 0)",
+                borderColor: "#cd3e3e",
+                fill: false
+            }]
+        },
+        options: {
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Análise de Sensibilidade do VPL',
+                    font: {
+                        size: 16
+                    }
+                },
+            },
+            hover: {
+                mode: 'index',
+                intersect: true
+            },
+            scales: {
+                y: {
+                    title: {
+                        display: true,
+                        text: 'VPL (R$)'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Potência do sistema fotovoltaico (kW)'
+                    },
+                }
+            }
+        }
+    };
+
+    var ctx4 = document.getElementById("grafico4");
+    var myChart4 = new Chart(ctx4, config4);
+}
 
 </script>
 {% endblock %}
