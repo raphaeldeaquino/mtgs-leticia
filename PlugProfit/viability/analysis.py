@@ -467,3 +467,140 @@ def calculate_viability(input_data, opcao_selecionada):
     # ******************************************************************************************************
     elif opcao_selecionada == '4':
         result = {'opcao': 'Análise de sensibilidade da potência do sistema fotovoltaico'}
+
+        #############################################################
+        # Cálculo do range da potência instalada FV (kW)
+        #############################################################
+        pot_fv_range = np.linspace(input_data['pot_fv_inicial'], input_data['pot_fv_final'], num=100)  # Intervalo de
+        # variação da potência FV
+
+        #############################################################
+        ## Cálculo da demanda de energia elétrica dos eletropostos
+        #############################################################
+        demanda = [input_data['num_eletropostos'] * input_data['pot_eletroposto'] * input_data['recarga_dia'] * 365] * \
+                  int(input_data['vida_util'])  # Demanda em kWh/ano
+        result["Demanda dos eletropostos"] = demanda
+
+        #############################################################
+        # Cálculo do custo de operação e manutenção
+        #############################################################
+        oper_manut = [input_data['o_e_m'] * input_data['num_eletropostos']] * int(input_data['vida_util'])  # Vetor
+        # com os valores de O&M anuais
+
+        #############################################################
+        ## Cálculo do aluguel
+        #############################################################
+        aluguel_ano = [input_data['aluguel_mes'] * 12] * int(input_data['vida_util'])
+
+        #############################################################
+        ## Cálculo da Receita Bruta
+        #############################################################
+        valor_recarga_anos = [input_data['valor_recarga']] * int(input_data['vida_util'])
+        receita_bruta_anual = [z * w for z, w in zip(demanda, valor_recarga_anos)]
+
+        #############################################################
+        ## Cálculo do Simples Nacional
+        #############################################################
+        DATA_DIR = joinpath(dirname(__file__), 'data')
+        simples_path = os.path.join(DATA_DIR, 'simples_nacional.xlsx')
+        simples_nacional = pd.read_excel(simples_path, sheet_name='Dados Simples Nacional')
+        anexo1 = simples_nacional.iloc[5:13, 0:5]
+        aliquota_efetiva, desconto_mensal, desconto_anual = calcular_simples_nacional(receita_bruta_anual, anexo1)
+
+        # Listas para armazenar resultados da análise de sensibilidade
+        vpl_pot_fv = []
+
+        # Loop para análise de sensibilidade do valor_recarga
+        for pot_fv_2 in pot_fv_range:
+            # (Recalcular todas as métricas relevantes com o novo valor de potência FV)
+
+            #############################################################
+            ## Cálculo do investimento inicial
+            #############################################################
+            invest_ini = input_data['num_eletropostos'] * input_data['preco_eletroposto'] + pot_fv_2 * \
+                         input_data['preco_fv'] + input_data['implantacao']
+
+            #############################################################
+            ## Cálculo da geração de energia do sistema fotovoltaico
+            #############################################################
+            geracoes, eficiencia = calcular_geracao_fotovoltaica(input_data['vida_util'], pot_fv_2,
+                                                                 input_data['h_inc'], input_data['pr'],
+                                                                 input_data['perda_eficiencia_anual'])
+
+            #############################################################
+            # Cálculo do valor residual do sistema fotovoltaico
+            #############################################################
+            fator_residual_fv = 1 - input_data['vida_util'] / 25 - 0.2  # Considera-se uma perda imediata de 20% +
+            # uma perda proporcional aos anos.
+            valor_residual_fv = pot_fv_2 * input_data['preco_fv'] * fator_residual_fv  # Valor residual do sistema FV
+            # a ser adicionado no último ano do fluxo de caixa
+
+            #############################################################
+            # Cálculo da fatura de energia
+            #############################################################
+            tarifa_energia_anos = [input_data['tarifa_energia']] * int(input_data['vida_util'])
+            tusds = [input_data['tusd']] * int(input_data['vida_util'])
+
+            # Calcular a fatura da concessionária para todos os anos
+            fatura_energia, abatimento, creditos = calcular_fatura_4(geracoes, demanda, tarifa_energia_anos, tusds,
+                                                                     input_data['fator_simult'],
+                                                                     input_data['custo_disponibilidade'])
+
+            #############################################################
+            ## Cálculo de financiamento
+            #############################################################
+            valor_total_financiado = (input_data['perc_finan'] / 100) * invest_ini
+            prestacoes = calcular_financiamento(valor_total_financiado, input_data['numero_prestacoes'],
+                                                input_data['taxa_juros_anual'],
+                                                input_data['tipo_financiamento'])
+
+            meses = [i for i in range(input_data['numero_prestacoes'])]
+            juros_mensais = [(prestacoes[i] - valor_total_financiado / input_data['numero_prestacoes']) for i in
+                             range(input_data['numero_prestacoes'])]
+            amortizacao_mensal = [valor_total_financiado / input_data['numero_prestacoes'] for _ in
+                                  range(input_data['numero_prestacoes'])]
+
+            #############################################################
+            ## Cálculo do fluxo de caixa
+            #############################################################
+            invest_ini = invest_ini + 1  # O +1 é para não ter fluxo >= 0 no Ano 0 para não afetar o cálculo da TIR
+            fluxo, financiamento = calcular_fluxo_de_caixa(receita_bruta_anual, desconto_anual, fatura_energia,
+                                                           oper_manut, aluguel_ano, prestacoes, valor_total_financiado,
+                                                           invest_ini, valor_residual_fv)
+
+            #############################################################
+            # Calcular o VPL
+            vpl = npf.npv(input_data['tma'], fluxo)
+            vpl_pot_fv.append(vpl)
+
+        #############################################################
+
+        # Encontrar a posição do maior valor de VPL
+        posicao_max_vpl = np.argmax(vpl_pot_fv)
+
+        # Encontrar o maior valor de VPL
+        maior_vpl = vpl_pot_fv[posicao_max_vpl]
+        result["Valor ótimo do VPL em R$"] = maior_vpl
+
+        # Encontrar a potência correspondente usando a posição encontrada
+        potencia_correspondente = pot_fv_range[posicao_max_vpl]
+        result["Potência ótima do sistema fotovoltaico em kW"] = potencia_correspondente
+
+        # Plotar os resultados da análise de sensibilidade
+        # Dividir os dados em duas séries com base na condição VPL >= 0 e VPL < 0
+        vpl_positivo = []
+        vpl_negativo = []
+        for vpl_valor in vpl_pot_fv:
+            if vpl_valor >= 0:
+                vpl_positivo.append(vpl_valor)
+                vpl_negativo.append(np.nan)
+            else:
+                vpl_positivo.append(np.nan)
+                vpl_negativo.append(vpl_valor)
+
+        # Gerar as duas séries separadamente com cores diferentes
+        result['pot_fv_range'] = list(pot_fv_range)
+        result['vpl_positivo'] = vpl_positivo
+        result['vpl_negativo'] = vpl_negativo
+
+        return result

@@ -2,4 +2,4 @@ from flask import Blueprint
 
 bp = Blueprint('contact', __name__)
 
-from MobPowerEcon.contact import routes
+from PlugProfit.contact import routes

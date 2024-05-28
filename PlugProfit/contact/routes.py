@@ -1,5 +1,5 @@
 from flask import render_template
-from MobPowerEcon.contact import bp
+from PlugProfit.contact import bp
 
 
 @bp.route('/')

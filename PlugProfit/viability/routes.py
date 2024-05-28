@@ -1,5 +1,5 @@
 from flask import render_template, request
-from MobPowerEcon.viability import bp
+from PlugProfit.viability import bp
 from .analysis import calculate_viability
 
 
