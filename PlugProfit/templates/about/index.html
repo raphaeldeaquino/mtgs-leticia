@@ -7,10 +7,25 @@
         <div class="form_wrapper">
             <div class="form_container">
                 <div class="title_container">
-                    <h2>Sobre a ferramenta</h2>
+                    <h2>Sobre o PlugProfit</h2>
+                </div>
+                <p style="padding-top:30px">O PlugProfit é uma ferramenta computacional desenvolvida para auxiliar investidores na avaliação da viabilidade econômica de investimentos em eletropostos. Este projeto foi realizado no âmbito do <a href="https://teclimpa.ifg.edu.br">Programa de Pós-graduação em Tecnologia, Gestão e Sustentabilidade (PPGTGS)</a> do <a href="https://ifg.edu.br/">Instituto Federal de Educação, Ciência e Tecnologia de Goiás (IFG)</a>.</p>
+                <p>A ferramenta considera as tributações do Simples Nacional e as regras do Sistema de Compensação de Energia Elétrica (SCEE) estabelecidas pela <a href="https://www.planalto.gov.br/ccivil_03/_ato2019-2022/2022/lei/l14300.htm#:~:text=LEI%20N%C2%BA%2014.300%2C%20DE%206%20DE%20JANEIRO%20DE%202022&text=Institui%20o%20marco%20legal%20da,1996%3B%20e%20d%C3%A1%20outras%20provid%C3%AAncias.">Lei 14.300/2022</a>. Desenvolvida em linguagem Python, o PlugProfit conta com uma interface gráfica web intuitiva e amigável, construída seguindo o padrão <i>Model-View-Presenter</i> (MVP).</p>
+                <p>Com o PlugProfit, os usuários podem:</p>
+                <ul>
+                    <li>Escolher o tipo de financiamento (SAC ou PRICE).</li>
+                    <li>Incluir ou não sistemas fotovoltaicos.</li>
+                    <li>Realizar análises de sensibilidade sobre três parâmetros específicos.</li>
+                </ul>
+                <p>As funcionalidades da ferramenta permitem obter informações detalhadas sobre o financiamento, incluindo juros, parcelas e valor total. Além disso, o PlugProfit oferece indicadores econômicos essenciais como Valor Presente Líquido (VPL), Taxa Interna de Retorno (TIR) e Payback Descontado.</p>
+                <p>A ferramenta também permite análises de sensibilidade dos parâmetros, como o valor da recarga, as horas de recarga por eletroposto por dia e a potência do sistema fotovoltaico, possibilitando assim o dimensionamento econômico ótimo dos investimentos.</p>
+                <div class="image-container">
+                    <img src="{{url_for('static', filename='img/ifg.jpeg')}}">
+                    <img src="{{url_for('static', filename='img/mtgs.png')}}">
                 </div>
             </div>
         </div>
     </div>
+    {% include 'footer.html' %}
 </section>
 {% endblock %}

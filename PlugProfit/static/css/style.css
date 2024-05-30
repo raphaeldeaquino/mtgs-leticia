@@ -273,10 +273,6 @@ h6 {
   background-color: #2f9e41;
 }
 
-/*--------------------------------------------------------------
-# Hero Section
---------------------------------------------------------------*/
-
 @media (min-width: 992px) {
   #hero {
     padding-left: 160px;
@@ -285,7 +281,7 @@ h6 {
 
 #hero {
   content: "";
-  position: absolute;
+  position: relative;
   background-color: rgba(248, 248, 248, 0.8);
   bottom: 0;
   top: 0;
@@ -443,6 +439,18 @@ h6 {
   fill: #ff5828;
 }
 
+.services .iconbox-green i {
+  color: #2f9e41;
+}
+
+.services .iconbox-green:hover .icon i {
+  color: #fff;
+}
+
+.services .iconbox-green:hover .icon path {
+  fill: #2f9e41;
+}
+
 .services .iconbox-teal i {
   color: #11dbcf;
 }
@@ -455,32 +463,63 @@ h6 {
   fill: #11dbcf;
 }
 
-@media (max-width: 992px) {
-  #hero {
-    text-align: center;
-  }
-
-  #hero h1 {
-    font-size: 32px;
-    line-height: 36px;
-  }
-
-  #hero p {
-    margin-top: 10px;
-    font-size: 20px;
-    line-height: 24px;
-  }
+#footer {
+    position: relative;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+  padding-top: 50px;
 }
 
-.logo-main img {
-    height:150px;
-    overflow:hidden;
-    padding: 20px;
+#footer p {
+    font-size: 12px;
 }
 
-/*--------------------------------------------------------------
-# Sections General
---------------------------------------------------------------*/
+#footer .social-links {
+  margin: 0 0 40px 0;
+}
+
+#footer .social-links a {
+  font-size: 18px;
+  display: inline-block;
+  background: #2f9e41;
+  color: #fff;
+  line-height: 1;
+  padding: 8px 0;
+  margin-right: 4px;
+  border-radius: 50%;
+  text-align: center;
+  width: 36px;
+  height: 36px;
+  transition: 0.3s;
+  overflow: hidden;
+}
+
+#footer .social-links a img {
+    width: 100%;
+    height: auto;
+    vertical-align: middle; /* Centraliza a imagem verticalmente */
+    border-radius: 10%;
+    width: 15px;  /* Ajuste este valor conforme necessário */
+    height: 15px;
+}
+
+#footer .social-links a:hover {
+  background: #4CC75A;
+  color: #fff;
+  text-decoration: none;
+}
+
+
+#page-container {
+  position: relative;
+  min-height: 100vh;
+}
+
+#content-wrap {
+  padding-bottom: 2.5rem;    /* Footer height */
+}
+
 section {
   padding: 60px 0;
   overflow: auto;
@@ -1277,66 +1316,6 @@ section {
   }
 }
 
-/*--------------------------------------------------------------
-# Footer
---------------------------------------------------------------*/
-#footer {
-  background: #f7f8f9;
-  color: #45505b;
-  font-size: 14px;
-  text-align: center;
-  padding: 30px 0;
-}
-
-#footer h3 {
-  font-size: 36px;
-  font-weight: 700;
-  position: relative;
-  font-family: "Poppins", sans-serif;
-  padding: 0;
-  margin: 0 0 15px 0;
-}
-
-#footer p {
-  font-size: 15;
-  font-style: italic;
-  padding: 0;
-  margin: 0 0 40px 0;
-}
-
-#footer .social-links {
-  margin: 0 0 40px 0;
-}
-
-#footer .social-links a {
-  font-size: 18px;
-  display: inline-block;
-  background: #2f9e41;
-  color: #fff;
-  line-height: 1;
-  padding: 8px 0;
-  margin-right: 4px;
-  border-radius: 50%;
-  text-align: center;
-  width: 36px;
-  height: 36px;
-  transition: 0.3s;
-}
-
-#footer .social-links a:hover {
-  background: #0678e3;
-  color: #fff;
-  text-decoration: none;
-}
-
-#footer .copyright {
-  margin: 0 0 5px 0;
-}
-
-#footer .credits {
-  font-size: 13px;
-}
-
 .form_wrapper {
 			 background: #fff;
 			 height: 100%;
@@ -1500,7 +1479,48 @@ section {
 			 font-size: 1.0em;
 			 line-height: 1.5em;
 			 margin: 0;
+			 text-align: justify;
 		}
+
+.form_container a {
+    color: #2f9e41; /* Verde claro */
+    text-decoration: none; /* Remover sublinhado */
+    transition: color 0.3s ease-in-out; /* Adiciona uma transição suave */
+}
+
+/* Definindo a cor verde escuro ao passar o mouse */
+.form_container a:hover {
+    color: #4CC75A; /* Verde escuro */
+    text-decoration: none; /* Garante que o sublinhado não reapareça */
+}
+
+.image-container {
+    display: flex;
+    justify-content: center; /* Centraliza o conteúdo horizontalmente */
+    align-items: center; /* Centraliza o conteúdo verticalmente */
+    gap: 20px; /* Espaçamento entre as imagens */
+    padding-top: 40px;
+}
+
+.image-container img {
+    max-width: 100%; /* Garante que a imagem não exceda a largura do contêiner */
+    height: auto; /* Mantém a proporção da imagem */
+    width: 200px; /* Define a largura fixa para as imagens */
+    height: auto; /* Mantém a proporção da imagem */
+}
+
+.button {
+  font: bold 15px Arial;
+  text-decoration: none;
+  background-color: #EEEEEE;
+  color: #333333;
+  padding: 2px 6px 2px 6px;
+  margin-top: 30px;
+  border-top: 1px solid #CCCCCC;
+  border-right: 1px solid #333333;
+  border-bottom: 1px solid #333333;
+  border-left: 1px solid #CCCCCC;
+}
 
 		@media (max-width: 600px) {
 			 .form_wrapper .col_half {

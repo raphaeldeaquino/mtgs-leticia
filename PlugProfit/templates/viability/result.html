@@ -10,6 +10,29 @@
                     <h2>Resultado da análise de viabilidade</h2>
                 </div>
                 <p style="padding-top:20px"><b>Opção selecionada:</b> {{ result['opcao'] }}</p>
+                <p><b>Parâmetros da análise:</b></p>
+                <ul>
+                    <li>Número de eletropostos: {{ result['num_eletropostos'] }}</li>
+                    <li>Potência do eletroposto: {{ result['pot_eletroposto'] }} kW</li>
+                    <li>Recarga: {{ result['recarga_dia'] }} h/dia</li>
+                    <li>Potência do sistema fotovoltaico: {{ result['pot_fv'] }} kW</li>
+                    <li>Horas de irradiação solar média por dia: {{ result['h_inc'] }} horas</li>
+                    <li>Performance ratio: {{ result['pr'] }}</li>
+                    <li>Perda de eficiência anual do sistema: {{ result['perda_eficiencia_anual'] }}</li>
+                    <li>Preço de cada eletroposto: R$ {{ result['preco_eletroposto'] }}</li>
+                    <li>Preço do sistema fotovoltaico: {{ result['preco_fv'] }} R$/kWp </li>
+                    <li>Outros custos de implantação: R$ {{ result['implantacao'] }} </li>
+                     <li>Valor da operação por eletroposto: {{ result['o_e_m'] }} R$/ano </li>
+                    <li>Valor da recarga: {{ result['valor_recarga'] }} R$/kWh </li>
+                    <li>Valor da tarifa de energia com impostos: {{ result['tarifa_energia'] }} R$/kWh </li>
+                    <li>Taxa Mínima de Atratividade: {{ result['tma'] }} </li>
+                    <li>Aluguel: {{ result['aluguel_mes'] }} R$/mês </li>
+                    <li>Vida útil financeira do fluxo de caixa: {{ result['vida_util'] }} anos </li>
+                    <li>Percentual a ser financiado: {{ result['perc_finan'] }} % </li>
+                    <li>Número total de prestações: {{ result['numero_prestacoes'] }} meses </li>
+                    <li>Taxa de juros anual: {{ result['taxa_juros_anual'] }} </li>
+                    <li>Tipo de financiamento: {{ result['tipo_financiamento'] }} </li>
+                </ul>
                 {% if result['opcao'] == 'Análise de sensibilidade do valor da recarga' %}
                     <p><b>Recarga por dia:</b> {{ result['Recarga por dia'] }} horas</p>
                 {% endif %}
@@ -133,13 +156,15 @@
                     <p><b>Investimento inicial:</b> R$ {{ result['Investimento inicial'] }}</p>
                     <p><b>Valor financiado:</b> R$ {{ result['Valor financiado'] }}</p>
                     <p style="padding-top:30px"><b>Indicadores Econômicos</b></p>
-                    <p><b>VPL:</b> R$ {{ result['VPL'] }}</p>
-                    <p><b>TIR:</b> {{ result['TIR'] }} %</p>
-                    {% if 'Payback Descontado' in result %}
-                        <p><b>Payback Descontado:</b> {{ result['Payback Descontado'] }} anos</p>
-                    {% else %}
-                        <p>O payback descontado não foi atingido.</p>
-                    {% endif %}
+                    <ul>
+                        <li><b>VPL:</b> R$ {{ result['VPL'] }}</li>
+                        <li><b>TIR:</b> {{ result['TIR'] }} %</li>
+                        {% if 'Payback Descontado' in result %}
+                        <li><b>Payback Descontado:</b> {{ result['Payback Descontado'] }} anos</li>
+                        {% else %}
+                        <li>O payback descontado não foi atingido.</li>
+                        {% endif %}
+                    </ul>
                 {% endif %}
                 {% if result['opcao'] == 'Análise de sensibilidade do valor da recarga' or result['opcao'] == 'Análise de sensibilidade da recarga por dia' %}
                     <canvas id="grafico3"></canvas>
@@ -149,15 +174,20 @@
                 <p><b>Potência ótima do sistema fotovoltaico:</b> {{ result['Potência ótima do sistema fotovoltaico em kW'] }} kW</p>
                 <canvas id="grafico4"></canvas>
                 {% endif %}
+                <br>
+                <a href="/viabilidade" class="button">Realizar outra análise</a>
+                <a href="#" id="generate-pdf" class="button">Baixar PDF</a>
             </div>
         </div>
     </div>
+    {% include 'footer.html' %}
 </section>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.14/jspdf.plugin.autotable.min.js"></script>
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 <script>
 // Aqui você usaria Jinja2 para passar os dados para o JavaScript
 var dados = {{ result|tojson }};
-
-console.log(dados);
 
 if (dados['opcao'] != 'Análise de sensibilidade da potência do sistema fotovoltaico') {
     // Configuração do gráfico 1
@@ -375,5 +405,269 @@ if (dados['opcao'] == 'Análise de sensibilidade da potência do sistema fotovol
     var myChart4 = new Chart(ctx4, config4);
 }
 
+document.getElementById('generate-pdf').addEventListener('click', generatePDF);
+
+async function generatePDF() {
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF();
+
+    // Definindo margens globais
+    const margin = 20;
+    const lineHeight = 6;
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+    const usableWidth = pageWidth - margin * 2;
+    const usableHeight = pageHeight - margin * 2;
+    let yPosition = margin + 10;
+
+    // Função para adicionar conteúdo com verificação de nova página
+    function addContent(content, x = 20) {
+        if (yPosition + lineHeight > pdf.internal.pageSize.height - (lineHeight + margin)) {
+            pdf.addPage();
+            yPosition = margin;
+        }
+        pdf.text(content, x, yPosition);
+        yPosition += lineHeight;
+    }
+
+    // Definir a posição e o tamanho da imagem centralizada
+    const desiredWidth = 50;
+    const aspectRatio = 436 / 246;
+    const desiredHeight = desiredWidth / aspectRatio;
+    const centerX = (pdf.internal.pageSize.getWidth() - desiredWidth) / 2;
+    // Desenhar a imagem no documento PDF
+    pdf.addImage('{{url_for('static', filename='img/logo.png')}}', 'PNG', centerX, 10, desiredWidth, desiredHeight);
+
+    // Adicionando título
+    pdf.setFontSize(14);
+    pdf.setFont("helvetica", "bold");
+    const text = "Resultado da análise de viabilidade econômica";
+    const textWidth = pdf.getStringUnitWidth(text) * pdf.internal.getFontSize() / pdf.internal.scaleFactor;
+    const xPosition = (pageWidth - textWidth) / 2;
+    pdf.text(text, xPosition, 50);
+    yPosition += 40;
+
+    // Adicionando conteúdo estático
+    pdf.setFontSize(10);
+    pdf.setFont("helvetica", "normal");
+    addContent("Opção selecionada: {{ result['opcao'] }}");
+    addContent("Número de eletropostos: {{ result['num_eletropostos'] }}");
+    addContent("Potência do eletroposto: {{ result['pot_eletroposto'] }} kW");
+    addContent("Recarga: {{ result['recarga_dia'] }} h/dia");
+    addContent("Potência do sistema fotovoltaico: {{ result['pot_fv'] }} kW");
+    addContent("Horas de irradiação solar média por dia: {{ result['h_inc'] }} horas");
+    addContent("Performance ratio: {{ result['pr'] }}");
+    addContent("Perda de eficiência anual do sistema: {{ result['perda_eficiencia_anual'] }}");
+    addContent("Preço de cada eletroposto: R$ {{ result['preco_eletroposto'] }}");
+    addContent("Preço do sistema fotovoltaico: {{ result['preco_fv'] }} R$/kWp");
+    addContent("Outros custos de implantação: R$ {{ result['implantacao'] }}");
+    addContent("Valor da operação por eletroposto: {{ result['o_e_m'] }} R$/ano");
+    addContent("Valor da recarga: {{ result['valor_recarga'] }} R$/kWh");
+    addContent("Valor da tarifa de energia com impostos: {{ result['tarifa_energia'] }} R$/kWh");
+    addContent("Taxa Mínima de Atratividade: {{ result['tma'] }}");
+    addContent("Aluguel: {{ result['aluguel_mes'] }} R$/mês");
+    addContent("Vida útil financeira do fluxo de caixa: {{ result['vida_util'] }} anos");
+    addContent("Percentual a ser financiado: {{ result['perc_finan'] }} %");
+    addContent("Número total de prestações: {{ result['numero_prestacoes'] }} meses");
+    addContent("Taxa de juros anual: {{ result['taxa_juros_anual'] }}");
+    addContent("Tipo de financiamento: {{ result['tipo_financiamento'] }}");
+
+    {% if result['opcao'] == 'Análise de sensibilidade do valor da recarga' %}
+    addContent("Recarga por dia: {{ result['Recarga por dia'] }} horas");
+    {% endif %}
+
+    {% if result['opcao'] == 'Sem análise de sensibilidade'
+    or result['opcao'] == 'Análise de sensibilidade do valor da recarga'
+    or result['opcao'] == 'Análise de sensibilidade da potência do sistema fotovoltaico' %}
+    addContent("Demanda dos eletropostos:");
+    {% for indice in range(result['Demanda dos eletropostos']|length) %}
+    addContent("- Ano {{ indice + 1 }}: {{ result['Demanda dos eletropostos'][indice] }} kWh", 30);
+    {% endfor %}
+    {% endif %}
+
+    {% if result['opcao'] != 'Análise de sensibilidade da potência do sistema fotovoltaico' %}
+    if (yPosition + (lineHeight * 10) > pdf.internal.pageSize.height - margin) {
+        pdf.addPage();
+        yPosition = margin;
+    }
+    const canvas = document.getElementById('grafico1');
+    const canvasWidth = canvas.width;
+    const canvasHeight = canvas.height;
+    const c = await html2canvas(document.getElementById('grafico1'));
+    const imgData = c.toDataURL('image/png');
+    pdf.addImage(imgData, 'PNG', 80, yPosition, canvasWidth / 10, canvasHeight / 10);
+
+    addContent("Geração fotovoltaica:");
+    {% for indice in range(result['Geração fotovoltaica']|length) %}
+    addContent("- Ano {{ indice + 1 }}: {{ result['Geração fotovoltaica'][indice] }} kWh", 30);
+    {% endfor %}
+    addContent("Valor residual do sistema fotovoltaico: R$ {{ result['Valor residual FV'] }}");
+    {% endif %}
+
+    {% if result['opcao'] == 'Sem análise de sensibilidade' or result['opcao'] == 'Análise de sensibilidade do valor da recarga' %}
+    addContent("Faturas da concessionária:");
+    {% for indice in range(result['Faturas concessionária']|length) %}
+    addContent("- Ano {{ indice + 1 }}: R$ {{ result['Faturas concessionária'][indice] }}", 30);
+    {% endfor %}
+    addContent("Abatimento de energia:");
+    {% for indice in range(result['Abatimento de energia']|length) %}
+    addContent("- Ano {{ indice + 1 }}: {{ result['Abatimento de energia'][indice] }} kWh", 30);
+    {% endfor %}
+    addContent("Créditos restantes:");
+    {% for indice in range(result['Créditos restantes']|length) %}
+    addContent("- Ano {{ indice + 1 }}: {{ result['Créditos restantes'][indice] }} kWh", 30);
+    {% endfor %}
+    {% endif %}
+
+    {% if result['opcao'] != 'Análise de sensibilidade da potência do sistema fotovoltaico' %}
+    if (yPosition + (lineHeight * 10) > pdf.internal.pageSize.height - margin) {
+        pdf.addPage();
+        yPosition = margin;
+    }
+    const canvas2 = document.getElementById('grafico2');
+    const canvasWidth2 = canvas2.width;
+    const canvasHeight2 = canvas2.height;
+    const c2 = await html2canvas(document.getElementById('grafico2'));
+    const imgData2 = c2.toDataURL('image/png');
+    pdf.addImage(imgData2, 'PNG', 80, yPosition, canvasWidth2 / 10, canvasHeight2 / 10);
+
+    addContent("Prestações de financiamento:");
+    var i = 0;
+    {% for indice in range(result['Vetor prestações de financiamento']|length) %}
+    addContent("- Mês {{ indice + 1 }}: R$ {{ result['Vetor prestações de financiamento'][indice] }}", 30);
+    i = i + 1;
+    {% endfor %}
+    while (i < 10) {
+        addContent('');
+        i = i + 1;
+    }
+    {% if 'Alíquota efetiva' in result %}
+    addContent("Alíquota efetiva:");
+    {% for indice in range(result['Alíquota efetiva']|length) %}
+    addContent("- Ano {{ indice + 1 }}: {{ result['Alíquota efetiva'][indice] }}", 30);
+    {% endfor %}
+    addContent("Desconto Simples Mensal:");
+    {% for indice in range(result['Desconto Simples Mensal']|length) %}
+    addContent("- Ano {{ indice + 1 }}: {{ result['Desconto Simples Mensal'][indice] }}", 30);
+    {% endfor %}
+    {% endif %}
+    {% endif %}
+
+    {% if result['opcao'] == 'Sem análise de sensibilidade' %}
+    function getColorForValue(value) {
+        return value >= 0 ? 'blue' : 'red';
+    }
+
+    function getColorForColumn(columnNumber) {
+        if (columnNumber == 1) {
+            return 'blue';
+        } else if (columnNumber > 1) {
+            return 'red';
+        }
+        return 'black'; // Default color if no condition is met
+    }
+
+    addContent("Resultado final do fluxo de caixa:");
+
+    const tableData = {
+    head: [['Anos',
+            'Receita Bruta (+)',
+            'Imposto Simples Nacional (-)',
+            'Fatura de energia (-)',
+            'O&M (-)',
+            'Aluguel (-)',
+            'Financiamento (-)',
+            'Fluxo de Caixa (=)']],
+    body: [
+        {% for indice in range(result['anos']|length) %}
+            ['{{ result['anos'][indice] }}',
+             'R$ {{ result['Receita Bruta'][indice] }}',
+             'R$ {{ result['Imposto Simples Nacional'][indice] }}',
+             'R$ {{ result['Fatura de energia'][indice] }}',
+             'R$ {{ result['O&M'][indice] }}',
+             'R$ {{ result['Aluguel'][indice] }}',
+             'R$ {{ result['Financiamento'][indice] }}',
+             'R$ {{ result['Fluxo de Caixa'][indice] }}'],
+            {% endfor %}
+        ]
+    };
+
+    pdf.autoTable({
+        head: tableData.head,
+        body: tableData.body,
+        startY: yPosition,
+        styles: {
+            fontSize: 7 // Ajuste global do tamanho da fonte para toda a tabela
+        },
+        didParseCell: function (data) {
+            if (data.section === 'body') {
+                const columnNumber = data.column.raw.dataKey;
+                const cellValue = parseFloat(data.cell.raw.replace(/[^\d.-]/g, ''));
+
+                if (columnNumber === 7) {
+                    // Aplicar a lógica para 'Fluxo de Caixa (=)'
+                    data.cell.styles.textColor = getColorForValue(cellValue);
+                } else {
+                    // Aplicar a lógica para outras colunas baseando-se no nome da coluna
+                    data.cell.styles.textColor = getColorForColumn(columnNumber);
+                }
+            }
+        }
+    });
+    yPosition = pdf.previousAutoTable.finalY + 10;
+    addContent("Investimento inicial: R$ {{ result['Investimento inicial'] }}");
+    addContent("Valor financiado: R$ {{ result['Valor financiado'] }}");
+    addContent("Indicadores Econômicos");
+    addContent("- VPL: R$ {{ result['VPL'] }}", 30);
+    addContent("- TIR: {{ result['TIR'] }} %", 30);
+    {% if 'Payback Descontado' in result %}
+    addContent("- Payback Descontado: {{ result['Payback Descontado'] }} anos", 30);
+    {% else %}
+    addContent("O payback descontado não foi atingido", 30);
+    {% endif %}
+    {% endif %}
+
+    {% if result['opcao'] == 'Análise de sensibilidade do valor da recarga' or result['opcao'] == 'Análise de sensibilidade da recarga por dia' %}
+    if (yPosition + (lineHeight * 14) > pdf.internal.pageSize.height - margin) {
+        pdf.addPage();
+        yPosition = margin;
+    }
+    const canvas3 = document.getElementById('grafico3');
+    const canvasWidth3 = canvas3.width;
+    const canvasHeight3 = canvas3.height;
+    const c3 = await html2canvas(document.getElementById('grafico3'));
+    const imgData3 = c3.toDataURL('image/png');
+    pdf.addImage(imgData3, 'PNG', 20, yPosition, canvasWidth3 / 14, canvasHeight3 / 14);
+    {% endif %}
+
+    {% if result['opcao'] == 'Análise de sensibilidade da potência do sistema fotovoltaico' %}
+    addContent("Valor ótimo do VPL: R$ {{ result['Valor ótimo do VPL em R$'] }}");
+    addContent("Potência ótima do sistema fotovoltaico: {{ result['Potência ótima do sistema fotovoltaico em kW'] }} kW");
+    if (yPosition + (lineHeight * 14) > pdf.internal.pageSize.height - margin) {
+        pdf.addPage();
+        yPosition = margin;
+    }
+    const canvas4 = document.getElementById('grafico4');
+    const canvasWidth4 = canvas4.width;
+    const canvasHeight4 = canvas4.height;
+    const c4 = await html2canvas(document.getElementById('grafico4'));
+    const imgData4 = c4.toDataURL('image/png');
+    pdf.addImage(imgData4, 'PNG', 20, yPosition, canvasWidth4 / 14, canvasHeight4 / 14);
+    {% endif %}
+
+    // Adicionar números de páginas
+    const pageCount = pdf.internal.getNumberOfPages();
+    const date = new Date();
+    const dateString = date.toLocaleString();
+    const formattedDate = `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`;
+    for (let i = 1; i <= pageCount; i++) {
+        pdf.setPage(i);
+        pdf.setFontSize(8);
+        pdf.text(`Relatório gerado pelo PlugProfit em ${formattedDate} - Página ${i} de ${pageCount}`, pageWidth / 2, pageHeight - margin / 2, { align: 'center' });
+    }
+
+    // Salvando o PDF
+    pdf.save('analise_viabilidade.pdf');
+}
 </script>
 {% endblock %}

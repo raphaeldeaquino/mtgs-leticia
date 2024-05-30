@@ -1,6 +1,6 @@
 from flask import render_template, request
 from PlugProfit.viability import bp
-from .analysis import calculate_viability
+from .analysis import *
 
 
 @bp.route('/', methods=('GET', 'POST'))
@@ -124,11 +124,24 @@ def index():
             'pot_fv_final': pot_fv_final
         }
 
-        print(input_data, opcao_selecionada)
-
         result = calculate_viability(input_data, opcao_selecionada)
+        input_data['pot_eletroposto'] = format_two_digits(input_data['pot_eletroposto'])
+        input_data['pot_fv'] = format_two_digits(input_data['pot_fv'])
+        input_data['h_inc'] = format_two_digits(input_data['h_inc'])
+        input_data['pr'] = format_two_digits(input_data['pr'])
+        input_data['perda_eficiencia_anual'] = format_two_digits(input_data['perda_eficiencia_anual'])
+        input_data['preco_eletroposto'] = format_two_digits(input_data['preco_eletroposto'])
+        input_data['preco_fv'] = format_two_digits(input_data['preco_fv'])
+        input_data['implantacao'] = format_two_digits(input_data['implantacao'])
+        input_data['o_e_m'] = format_two_digits(input_data['o_e_m'])
+        input_data['valor_recarga'] = format_two_digits(input_data['valor_recarga'])
+        input_data['tarifa_energia'] = format_two_digits(input_data['tarifa_energia'])
+        input_data['tma'] = format_two_digits(input_data['tma'])
+        input_data['aluguel_mes'] = format_two_digits(input_data['aluguel_mes'])
+        input_data['perc_finan'] = format_two_digits(input_data['perc_finan'])
+        input_data['taxa_juros_anual'] = format_two_digits(input_data['taxa_juros_anual'])
 
-        print(result)
+        result.update(input_data)
 
         return render_template('viability/result.html', result=result)
 
