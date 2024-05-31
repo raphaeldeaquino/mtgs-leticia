@@ -25,6 +25,9 @@ def calcular_payback_descontado(fluxo, tma):
 
 
 def calculate_viability(input_data, opcao_selecionada):
+    use_photovoltaic = input_data['show_hide_fotovoltaico'] == 'on'
+    use_financing = input_data['show_hide_financiamento'] == 'on'
+
     if opcao_selecionada == '1':
         result = {'opcao': 'Sem análise de sensibilidade'}
 
@@ -34,8 +37,10 @@ def calculate_viability(input_data, opcao_selecionada):
         #############################################################
         ## Cálculo do investimento inicial
         #############################################################
-        invest_ini = input_data['num_eletropostos'] * input_data['preco_eletroposto'] + input_data['pot_fv'] * \
-                     input_data['preco_fv'] + input_data['implantacao']
+
+        invest_ini = input_data['num_eletropostos'] * input_data['preco_eletroposto'] + input_data['implantacao']
+        if use_photovoltaic:
+            invest_ini = invest_ini + input_data['pot_fv'] * input_data['preco_fv']
 
         #############################################################
         ## Cálculo da demanda de energia elétrica dos eletropostos
@@ -48,24 +53,27 @@ def calculate_viability(input_data, opcao_selecionada):
         #############################################################
         ## Cálculo da geração de energia do sistema fotovoltaico
         #############################################################
-        geracoes, eficiencia = calcular_geracao_fotovoltaica(input_data['vida_util'], input_data['pot_fv'],
-                                                             input_data['h_inc'], input_data['pr'],
-                                                             input_data['perda_eficiencia_anual'])
-        result["Geração fotovoltaica"] = list(map(format_two_digits, geracoes))
-        result["geracoes"] = geracoes
-
-        # Dados do gráfico da geração fotovoltaica ao longo dos anos
         result['anos'] = [str(x) for x in list(range(1, int(input_data['vida_util']) + 1))]
+        if use_photovoltaic:
+            geracoes, eficiencia = calcular_geracao_fotovoltaica(input_data['vida_util'], input_data['pot_fv'],
+                                                                 input_data['h_inc'], input_data['pr'],
+                                                                 input_data['perda_eficiencia_anual'])
+            result["Geração fotovoltaica"] = list(map(format_two_digits, geracoes))
+            result["geracoes"] = geracoes
 
-        #############################################################
-        # Cálculo do valor residual do sistema fotovoltaico
-        #############################################################
-        fator_residual_fv = 1 - input_data[
-            'vida_util'] / 25 - 0.2  # Considera-se uma perda imediata de 20% + uma perda proporcional aos anos.
-        valor_residual_fv = input_data['pot_fv'] * input_data[
-            'preco_fv'] * fator_residual_fv  # Valor residual do sistema FV a ser adicionado no último ano do fluxo
-        # de caixa
-        result['Valor residual FV'] = format_two_digits(valor_residual_fv)
+
+            #############################################################
+            # Cálculo do valor residual do sistema fotovoltaico
+            #############################################################
+            fator_residual_fv = 1 - input_data[
+                'vida_util'] / 25 - 0.2  # Considera-se uma perda imediata de 20% + uma perda proporcional aos anos.
+            valor_residual_fv = input_data['pot_fv'] * input_data[
+                'preco_fv'] * fator_residual_fv  # Valor residual do sistema FV a ser adicionado no último ano do fluxo
+            # de caixa
+            result['Valor residual FV'] = format_two_digits(valor_residual_fv)
+        else:
+            valor_residual_fv = 0.0
+            geracoes = list(np.zeros(input_data['vida_util']))
 
         #############################################################
         # Cálculo da fatura de energia
@@ -90,22 +98,26 @@ def calculate_viability(input_data, opcao_selecionada):
         #############################################################
         ## Cálculo de financiamento
         #############################################################
-        valor_total_financiado = (input_data['perc_finan'] / 100) * invest_ini
-        prestacoes = calcular_financiamento(valor_total_financiado, input_data['numero_prestacoes'],
-                                            input_data['taxa_juros_anual'], input_data['tipo_financiamento'])
-        result['Vetor prestações de financiamento'] = list(map(format_two_digits, prestacoes))
+        if use_financing:
+            valor_total_financiado = (input_data['perc_finan'] / 100) * invest_ini
+            prestacoes = calcular_financiamento(valor_total_financiado, input_data['numero_prestacoes'],
+                                                input_data['taxa_juros_anual'], input_data['tipo_financiamento'])
+            result['Vetor prestações de financiamento'] = list(map(format_two_digits, prestacoes))
 
-        meses = [i for i in range(1, input_data['numero_prestacoes'] + 1)]
-        juros_mensais = [(prestacoes[i] - valor_total_financiado / input_data['numero_prestacoes'])
-                         for i in range(input_data['numero_prestacoes'])]
-        amortizacao_mensal = [valor_total_financiado / input_data['numero_prestacoes']
-                              for _ in range(input_data['numero_prestacoes'])]
+            meses = [i for i in range(1, input_data['numero_prestacoes'] + 1)]
+            juros_mensais = [(prestacoes[i] - valor_total_financiado / input_data['numero_prestacoes'])
+                             for i in range(input_data['numero_prestacoes'])]
+            amortizacao_mensal = [valor_total_financiado / input_data['numero_prestacoes']
+                                  for _ in range(input_data['numero_prestacoes'])]
 
-        result['meses'] = meses
-        result['juros_mensais'] = juros_mensais
-        result['amortizacao_mensal'] = amortizacao_mensal
-        result['prestacoes'] = prestacoes
-        result['tipo_financiamento'] = input_data['tipo_financiamento']
+            result['meses'] = meses
+            result['juros_mensais'] = juros_mensais
+            result['amortizacao_mensal'] = amortizacao_mensal
+            result['prestacoes'] = prestacoes
+            result['tipo_financiamento'] = input_data['tipo_financiamento']
+        else:
+            valor_total_financiado = 0.0
+            prestacoes = list(np.zeros(input_data['numero_prestacoes']))
 
         #############################################################
         ## Cálculo do aluguel
@@ -194,8 +206,9 @@ def calculate_viability(input_data, opcao_selecionada):
         #############################################################
         ## Cálculo do investimento inicial
         #############################################################
-        invest_ini = input_data['num_eletropostos'] * input_data['preco_eletroposto'] + input_data['pot_fv'] * \
-                     input_data['preco_fv'] + input_data['implantacao']
+        invest_ini = input_data['num_eletropostos'] * input_data['preco_eletroposto'] + input_data['implantacao']
+        if use_photovoltaic:
+            invest_ini = invest_ini + input_data['pot_fv'] * input_data['preco_fv']
 
         #############################################################
         ## Cálculo da demanda de energia elétrica dos eletropostos
@@ -208,23 +221,26 @@ def calculate_viability(input_data, opcao_selecionada):
         #############################################################
         ## Cálculo da geração de energia do sistema fotovoltaico
         #############################################################
-        geracoes, eficiencia = calcular_geracao_fotovoltaica(input_data['vida_util'], input_data['pot_fv'],
-                                                             input_data['h_inc'], input_data['pr'],
-                                                             input_data['perda_eficiencia_anual'])
-        result["Geração fotovoltaica"] = list(map(format_two_digits, geracoes))
-        result['geracoes'] = geracoes
-
         # Dados do gráfico da geração fotovoltaica ao longo dos anos
         result['anos'] = [x for x in range(1, input_data['vida_util'] + 1)]
+        if use_photovoltaic:
+            geracoes, eficiencia = calcular_geracao_fotovoltaica(input_data['vida_util'], input_data['pot_fv'],
+                                                                 input_data['h_inc'], input_data['pr'],
+                                                                 input_data['perda_eficiencia_anual'])
+            result["Geração fotovoltaica"] = list(map(format_two_digits, geracoes))
+            result['geracoes'] = geracoes
 
-        #############################################################
-        # Cálculo do valor residual do sistema fotovoltaico
-        #############################################################
-        fator_residual_fv = 1 - input_data['vida_util'] / 25 - 0.2  # Considera-se uma perda imediata de 20% + uma
-        # perda proporcional aos anos.
-        valor_residual_fv = input_data['pot_fv'] * input_data['preco_fv'] * fator_residual_fv  # Valor residual do
-        # sistema FV a ser adicionado no último ano do fluxo de caixa
-        result['Valor residual FV'] = format_two_digits(valor_residual_fv)
+            #############################################################
+            # Cálculo do valor residual do sistema fotovoltaico
+            #############################################################
+            fator_residual_fv = 1 - input_data['vida_util'] / 25 - 0.2  # Considera-se uma perda imediata de 20% + uma
+            # perda proporcional aos anos.
+            valor_residual_fv = input_data['pot_fv'] * input_data['preco_fv'] * fator_residual_fv  # Valor residual do
+            # sistema FV a ser adicionado no último ano do fluxo de caixa
+            result['Valor residual FV'] = format_two_digits(valor_residual_fv)
+        else:
+            valor_residual_fv = 0.0
+            geracoes = list(np.zeros(input_data['vida_util']))
 
         #############################################################
         # Cálculo da fatura de energia
@@ -249,21 +265,25 @@ def calculate_viability(input_data, opcao_selecionada):
         #############################################################
         ## Cálculo de financiamento
         #############################################################
-        valor_total_financiado = (input_data['perc_finan'] / 100) * invest_ini
-        prestacoes = calcular_financiamento(valor_total_financiado, input_data['numero_prestacoes'],
-                                            input_data['taxa_juros_anual'], input_data['tipo_financiamento'])
-        result['Vetor prestações de financiamento'] = list(map(format_two_digits, prestacoes))
+        if use_financing:
+            valor_total_financiado = (input_data['perc_finan'] / 100) * invest_ini
+            prestacoes = calcular_financiamento(valor_total_financiado, input_data['numero_prestacoes'],
+                                                input_data['taxa_juros_anual'], input_data['tipo_financiamento'])
+            result['Vetor prestações de financiamento'] = list(map(format_two_digits, prestacoes))
 
-        meses = [i for i in range(input_data['numero_prestacoes'])]
-        juros_mensais = [(prestacoes[i] - valor_total_financiado / input_data['numero_prestacoes']) for i in
-                         range(input_data['numero_prestacoes'])]
-        amortizacao_mensal = [valor_total_financiado / input_data['numero_prestacoes'] for _ in
-                              range(input_data['numero_prestacoes'])]
+            meses = [i for i in range(input_data['numero_prestacoes'])]
+            juros_mensais = [(prestacoes[i] - valor_total_financiado / input_data['numero_prestacoes']) for i in
+                             range(input_data['numero_prestacoes'])]
+            amortizacao_mensal = [valor_total_financiado / input_data['numero_prestacoes'] for _ in
+                                  range(input_data['numero_prestacoes'])]
 
-        result['meses'] = meses
-        result['juros_mensais'] = juros_mensais
-        result['amortizacao_mensal'] = amortizacao_mensal
-        result['prestacoes'] = prestacoes
+            result['meses'] = meses
+            result['juros_mensais'] = juros_mensais
+            result['amortizacao_mensal'] = amortizacao_mensal
+            result['prestacoes'] = prestacoes
+        else:
+            valor_total_financiado = 0.0
+            prestacoes = list(np.zeros(input_data['numero_prestacoes']))
 
         #############################################################
         ## Cálculo do aluguel
@@ -337,29 +357,33 @@ def calculate_viability(input_data, opcao_selecionada):
         #############################################################
         ## Cálculo do investimento inicial
         #############################################################
-        invest_ini = input_data['num_eletropostos'] * input_data['preco_eletroposto'] + input_data['pot_fv'] * \
-                     input_data['preco_fv'] + input_data['implantacao']
+        invest_ini = input_data['num_eletropostos'] * input_data['preco_eletroposto'] + input_data['implantacao']
+        if use_photovoltaic:
+            invest_ini = invest_ini + input_data['pot_fv'] * input_data['preco_fv']
 
         #############################################################
         ## Cálculo da geração de energia do sistema fotovoltaico
         #############################################################
-        geracoes, eficiencia = calcular_geracao_fotovoltaica(input_data['vida_util'], input_data['pot_fv'],
-                                                             input_data['h_inc'], input_data['pr'],
-                                                             input_data['perda_eficiencia_anual'])
-        result["Geração fotovoltaica"] = list(map(format_two_digits, geracoes))
-        result['geracoes'] = geracoes
-
-        # Gerar o gráfico da geração fotovoltaica ao longo dos anos
         result['anos'] = [x for x in range(1, input_data['vida_util'] + 1)]
+        if use_photovoltaic:
+            geracoes, eficiencia = calcular_geracao_fotovoltaica(input_data['vida_util'], input_data['pot_fv'],
+                                                                 input_data['h_inc'], input_data['pr'],
+                                                                 input_data['perda_eficiencia_anual'])
+            result["Geração fotovoltaica"] = list(map(format_two_digits, geracoes))
+            result['geracoes'] = geracoes
 
-        #############################################################
-        # Cálculo do valor residual do sistema fotovoltaico
-        #############################################################
-        fator_residual_fv = 1 - input_data['vida_util'] / 25 - 0.2  # Considera-se uma perda imediata de 20% + uma
-        # perda proporcional aos anos.
-        valor_residual_fv = input_data['pot_fv'] * input_data['preco_fv'] * fator_residual_fv  # Valor residual do
-        # sistema FV a ser adicionado no último ano do fluxo de caixa
-        result['Valor residual FV'] = format_two_digits(valor_residual_fv)
+
+            #############################################################
+            # Cálculo do valor residual do sistema fotovoltaico
+            #############################################################
+            fator_residual_fv = 1 - input_data['vida_util'] / 25 - 0.2  # Considera-se uma perda imediata de 20% + uma
+            # perda proporcional aos anos.
+            valor_residual_fv = input_data['pot_fv'] * input_data['preco_fv'] * fator_residual_fv  # Valor residual do
+            # sistema FV a ser adicionado no último ano do fluxo de caixa
+            result['Valor residual FV'] = format_two_digits(valor_residual_fv)
+        else:
+            valor_residual_fv = 0.0
+            geracoes = list(np.zeros(input_data['vida_util']))
 
         #############################################################
         # Cálculo do custo de operação e manutenção
@@ -370,21 +394,25 @@ def calculate_viability(input_data, opcao_selecionada):
         #############################################################
         ## Cálculo de financiamento
         #############################################################
-        valor_total_financiado = (input_data['perc_finan'] / 100) * invest_ini
-        prestacoes = calcular_financiamento(valor_total_financiado, input_data['numero_prestacoes'],
-                                            input_data['taxa_juros_anual'], input_data['tipo_financiamento'])
-        result['Vetor prestações de financiamento'] = list(map(format_two_digits, prestacoes))
+        if use_financing:
+            valor_total_financiado = (input_data['perc_finan'] / 100) * invest_ini
+            prestacoes = calcular_financiamento(valor_total_financiado, input_data['numero_prestacoes'],
+                                                input_data['taxa_juros_anual'], input_data['tipo_financiamento'])
+            result['Vetor prestações de financiamento'] = list(map(format_two_digits, prestacoes))
 
-        meses = [i for i in range(input_data['numero_prestacoes'])]
-        juros_mensais = [(prestacoes[i] - valor_total_financiado / input_data['numero_prestacoes']) for i in
-                         range(input_data['numero_prestacoes'])]
-        amortizacao_mensal = [valor_total_financiado / input_data['numero_prestacoes'] for _ in
-                              range(input_data['numero_prestacoes'])]
+            meses = [i for i in range(input_data['numero_prestacoes'])]
+            juros_mensais = [(prestacoes[i] - valor_total_financiado / input_data['numero_prestacoes']) for i in
+                             range(input_data['numero_prestacoes'])]
+            amortizacao_mensal = [valor_total_financiado / input_data['numero_prestacoes'] for _ in
+                                  range(input_data['numero_prestacoes'])]
 
-        result['meses'] = meses
-        result['juros_mensais'] = juros_mensais
-        result['amortizacao_mensal'] = amortizacao_mensal
-        result['prestacoes'] = prestacoes
+            result['meses'] = meses
+            result['juros_mensais'] = juros_mensais
+            result['amortizacao_mensal'] = amortizacao_mensal
+            result['prestacoes'] = prestacoes
+        else:
+            valor_total_financiado = 0.0
+            prestacoes = list(np.zeros(input_data['numero_prestacoes']))
 
         #############################################################
         ## Cálculo do aluguel
@@ -549,16 +577,20 @@ def calculate_viability(input_data, opcao_selecionada):
             #############################################################
             ## Cálculo de financiamento
             #############################################################
-            valor_total_financiado = (input_data['perc_finan'] / 100) * invest_ini
-            prestacoes = calcular_financiamento(valor_total_financiado, input_data['numero_prestacoes'],
-                                                input_data['taxa_juros_anual'],
-                                                input_data['tipo_financiamento'])
+            if use_financing:
+                valor_total_financiado = (input_data['perc_finan'] / 100) * invest_ini
+                prestacoes = calcular_financiamento(valor_total_financiado, input_data['numero_prestacoes'],
+                                                    input_data['taxa_juros_anual'],
+                                                    input_data['tipo_financiamento'])
 
-            meses = [i for i in range(input_data['numero_prestacoes'])]
-            juros_mensais = [(prestacoes[i] - valor_total_financiado / input_data['numero_prestacoes']) for i in
-                             range(input_data['numero_prestacoes'])]
-            amortizacao_mensal = [valor_total_financiado / input_data['numero_prestacoes'] for _ in
-                                  range(input_data['numero_prestacoes'])]
+                meses = [i for i in range(input_data['numero_prestacoes'])]
+                juros_mensais = [(prestacoes[i] - valor_total_financiado / input_data['numero_prestacoes']) for i in
+                                 range(input_data['numero_prestacoes'])]
+                amortizacao_mensal = [valor_total_financiado / input_data['numero_prestacoes'] for _ in
+                                      range(input_data['numero_prestacoes'])]
+            else:
+                valor_total_financiado = 0.0
+                prestacoes = list(np.zeros(input_data['numero_prestacoes']))
 
             #############################################################
             ## Cálculo do fluxo de caixa

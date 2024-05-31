@@ -9,7 +9,7 @@ def index():
         # Dados eletropostos
 
         # Número de eletropostos
-        num_eletropostos = int(request.form.get('num_eletropostos')) if request.form.get('num_eletropostos') else 4
+        num_eletropostos = int(request.form.get('num_eletropostos')) if request.form.get('num_eletropostos') else 1
 
         # Potência do eletroposto kW
         pot_eletroposto = float(request.form.get('pot_eletroposto')) if request.form.get('pot_eletroposto') else 22
@@ -66,13 +66,14 @@ def index():
         # Dados de financiamento
 
         # Percentual a ser financiado de 0 a 100%
-        perc_finan = float(request.form.get('perc_finan'))
+        perc_finan = float(request.form.get('perc_finan')) if request.form.get('perc_finan') else 30
 
         # Número total de prestações em meses
-        numero_prestacoes = int(request.form.get('numero_prestacoes'))
+        numero_prestacoes = int(request.form.get('numero_prestacoes')) if request.form.get('numero_prestacoes') else 12
 
         # Taxa de juros anual (em decimal)
-        taxa_juros_anual = float(request.form.get('taxa_juros_anual'))
+        taxa_juros_anual = float(request.form.get('taxa_juros_anual')) / 100 if request.form.get('taxa_juros_anual') \
+            else 0.05
 
         # Tipo de financiamento (price ou sac)
         tipo_financiamento = request.form.get('tipo_financiamento')
@@ -85,12 +86,20 @@ def index():
         custo_disponibilidade = 100     # Monofásico = 30 kWh; Bifásico = 50 kWh; Trifásico = 100 kWh.
 
         # Dados de sensibilidade
-        valor_recarga_inicial = 1   # Valor inicial do range valor de recarga (R$)
-        valor_recarga_final = 4     # Valor final do range valor de recarga (R$)
-        recarga_dia_inicial = 0     # Valor inicial do range recarga por dia (h/dia)
-        recarga_dia_final = 12      # Valor final do range recarga por dia (h/dia)
-        pot_fv_inicial = 1          # Valor inicial do range potência do FV (kW)
-        pot_fv_final = 200          # Valor final do range potência do FV (kW)
+        valor_recarga_inicial = float(request.form.get('valor_recarga_inicial')) if request.form.get('valor_recarga_inicial')\
+            else 0  # Valor inicial do range valor de recarga (R$)
+        valor_recarga_final = float(request.form.get('valor_recarga_final')) if request.form.get('valor_recarga_final')\
+            else 0  # Valor final do range valor de recarga (R$)
+        recarga_dia_inicial = float(request.form.get('recarga_dia_inicial')) if request.form.get('recarga_dia_inicial')\
+            else 0  # Valor inicial do range recarga por dia (h/dia)
+        recarga_dia_final = float(request.form.get('recarga_dia_final')) if request.form.get('recarga_dia_final')\
+            else 0  # Valor final do range recarga por dia (h/dia)
+        pot_fv_inicial = float(request.form.get('pot_fv_inicial')) if request.form.get('pot_fv_inicial')\
+            else 0  # Valor inicial do range potência do FV (kW)
+        pot_fv_final = float(request.form.get('pot_fv_final')) if request.form.get('pot_fv_final')\
+            else 0  # Valor final do range potência do FV (kW)
+        show_hide_fotovoltaico = request.form.get('show_hide_fotovoltaico')
+        show_hide_financiamento = request.form.get('show_hide_financiamento')
 
         input_data = {
             'num_eletropostos': num_eletropostos,
@@ -121,7 +130,9 @@ def index():
             'recarga_dia_inicial': recarga_dia_inicial,
             'recarga_dia_final': recarga_dia_final,
             'pot_fv_inicial': pot_fv_inicial,
-            'pot_fv_final': pot_fv_final
+            'pot_fv_final': pot_fv_final,
+            'show_hide_fotovoltaico': show_hide_fotovoltaico,
+            'show_hide_financiamento': show_hide_financiamento
         }
 
         result = calculate_viability(input_data, opcao_selecionada)
@@ -140,6 +151,8 @@ def index():
         input_data['aluguel_mes'] = format_two_digits(input_data['aluguel_mes'])
         input_data['perc_finan'] = format_two_digits(input_data['perc_finan'])
         input_data['taxa_juros_anual'] = format_two_digits(input_data['taxa_juros_anual'])
+        input_data['valor_recarga_inicial'] = format_two_digits(input_data['valor_recarga_inicial'])
+        input_data['valor_recarga_final'] = format_two_digits(input_data['valor_recarga_final'])
 
         result.update(input_data)
 

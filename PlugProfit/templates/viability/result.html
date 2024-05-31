@@ -15,12 +15,18 @@
                     <li>Número de eletropostos: {{ result['num_eletropostos'] }}</li>
                     <li>Potência do eletroposto: {{ result['pot_eletroposto'] }} kW</li>
                     <li>Recarga: {{ result['recarga_dia'] }} h/dia</li>
+                    {% if result['show_hide_fotovoltaico'] == 'on' %}
                     <li>Potência do sistema fotovoltaico: {{ result['pot_fv'] }} kW</li>
                     <li>Horas de irradiação solar média por dia: {{ result['h_inc'] }} horas</li>
                     <li>Performance ratio: {{ result['pr'] }}</li>
                     <li>Perda de eficiência anual do sistema: {{ result['perda_eficiencia_anual'] }}</li>
+                    {% else %}
+                    <li>Sem sistema fotovoltaico</li>
+                    {% endif %}
                     <li>Preço de cada eletroposto: R$ {{ result['preco_eletroposto'] }}</li>
+                    {% if result['show_hide_fotovoltaico'] == 'on' %}
                     <li>Preço do sistema fotovoltaico: {{ result['preco_fv'] }} R$/kWp </li>
+                    {% endif %}
                     <li>Outros custos de implantação: R$ {{ result['implantacao'] }} </li>
                      <li>Valor da operação por eletroposto: {{ result['o_e_m'] }} R$/ano </li>
                     <li>Valor da recarga: {{ result['valor_recarga'] }} R$/kWh </li>
@@ -28,10 +34,14 @@
                     <li>Taxa Mínima de Atratividade: {{ result['tma'] }} </li>
                     <li>Aluguel: {{ result['aluguel_mes'] }} R$/mês </li>
                     <li>Vida útil financeira do fluxo de caixa: {{ result['vida_util'] }} anos </li>
+                    {% if result['show_hide_financiamento'] == 'on' %}
                     <li>Percentual a ser financiado: {{ result['perc_finan'] }} % </li>
                     <li>Número total de prestações: {{ result['numero_prestacoes'] }} meses </li>
                     <li>Taxa de juros anual: {{ result['taxa_juros_anual'] }} </li>
                     <li>Tipo de financiamento: {{ result['tipo_financiamento'] }} </li>
+                    {% else %}
+                    <li>Sem financiamento</li>
+                    {% endif %}
                 </ul>
                 {% if result['opcao'] == 'Análise de sensibilidade do valor da recarga' %}
                     <p><b>Recarga por dia:</b> {{ result['Recarga por dia'] }} horas</p>
@@ -46,7 +56,7 @@
                         {% endfor %}
                     </ul>
                 {% endif %}
-                {% if result['opcao'] != 'Análise de sensibilidade da potência do sistema fotovoltaico' %}
+                {% if result['opcao'] != 'Análise de sensibilidade da potência do sistema fotovoltaico' and result['show_hide_fotovoltaico'] == 'on' %}
                 <div class="row clearfix">
                     <div class="col_half">
                         <p><b>Geração fotovoltaica:</b></p>
@@ -73,22 +83,26 @@
                             </ul>
                         </div>
                         <div class="col_half">
+                            {% if result['show_hide_fotovoltaico'] == 'on' %}
                             <p><b>Abatimento de energia:</b></p>
                             <ul>
                                 {% for indice in range(result['Abatimento de energia']|length) %}
                                     <li>Ano {{ indice + 1 }}: {{ result['Abatimento de energia'][indice] }} kWh</li>
                                 {% endfor %}
                             </ul>
+                            {% endif %}
                         </div>
                     </div>
+                    {% if result['show_hide_fotovoltaico'] == 'on' %}
                     <p><b>Créditos restantes:</b></p>
                     <ul>
                         {% for indice in range(result['Créditos restantes']|length) %}
                             <li>Ano {{ indice + 1 }}: {{ result['Créditos restantes'][indice] }} kWh</li>
                         {% endfor %}
                     </ul>
+                    {% endif %}
                 {% endif %}
-                {% if result['opcao'] != 'Análise de sensibilidade da potência do sistema fotovoltaico' %}
+                {% if result['opcao'] != 'Análise de sensibilidade da potência do sistema fotovoltaico' and result['show_hide_financiamento'] == 'on' %}
                 <div class="row clearfix">
                     <div class="col_half">
                         <p><b>Prestações de financiamento:</b></p>
@@ -130,7 +144,9 @@
                                 <th>Fatura de energia (-)</th>
                                 <th>O&M (-)</th>
                                 <th>Aluguel (-)</th>
+                                {% if result['show_hide_financiamento'] == 'on' %}
                                 <th>Financiamento (-)</th>
+                                {% endif %}
                                 <th>Fluxo de Caixa (=)</th>
                             </tr>
                         </thead>
@@ -143,7 +159,9 @@
                                     <td><font color="red">R$ {{ result['Fatura de energia'][indice] }}</font></td>
                                     <td><font color="red">R$ {{ result['O&M'][indice] }}</font></td>
                                     <td><font color="red">R$ {{ result['Aluguel'][indice] }}</font></td>
+                                    {% if result['show_hide_financiamento'] == 'on' %}
                                     <td><font color="red">R$ {{ result['Financiamento'][indice] }}</font></td>
+                                    {% endif %}
                                     {% if result['Fluxo de Caixa'][indice][0] == '-' %}
                                         <td><font color="red">R$ {{ result['Fluxo de Caixa'][indice] }}</font></td>
                                     {% else %}
@@ -154,7 +172,9 @@
                         </tbody>
                     </table>
                     <p><b>Investimento inicial:</b> R$ {{ result['Investimento inicial'] }}</p>
+                    {% if result['show_hide_financiamento'] == 'on' %}
                     <p><b>Valor financiado:</b> R$ {{ result['Valor financiado'] }}</p>
+                    {% endif %}
                     <p style="padding-top:30px"><b>Indicadores Econômicos</b></p>
                     <ul>
                         <li><b>VPL:</b> R$ {{ result['VPL'] }}</li>
@@ -166,10 +186,29 @@
                         {% endif %}
                     </ul>
                 {% endif %}
+                {% if result['opcao'] == 'Análise de sensibilidade do valor da recarga' %}
+                    <p><b>Variação do valor da recarga considerada na análise de sensibilidade:</b></p>
+                    <ul>
+                       <li>Limite inferior: R$ {{ result['valor_recarga_inicial'] }}</li>
+                        <li>Limite superior: R$ {{ result['valor_recarga_final'] }}</li>
+                    </ul>
+                {% endif %}
+                {% if result['opcao'] == 'Análise de sensibilidade da recarga por dia' %}
+                    <p><b>Variação da recarga por dia considerada na análise de sensibilidade:</b></p>
+                    <ul>
+                       <li>Limite inferior: {{ result['recarga_dia_inicial'] }} h/dia</li>
+                        <li>Limite superior: {{ result['recarga_dia_final'] }} h/dia</li>
+                    </ul>
+                {% endif %}
                 {% if result['opcao'] == 'Análise de sensibilidade do valor da recarga' or result['opcao'] == 'Análise de sensibilidade da recarga por dia' %}
                     <canvas id="grafico3"></canvas>
                 {% endif %}
                 {% if result['opcao'] == 'Análise de sensibilidade da potência do sistema fotovoltaico' %}
+                <p><b>Variação da potência do sistema fotovoltaico considerada na análise de sensibilidade:</b></p>
+                <ul>
+                   <li>Limite inferior: {{ result['pot_fv_inicial'] }} kW</li>
+                    <li>Limite superior: {{ result['pot_fv_final'] }} kW</li>
+                </ul>
                 <p><b>Valor ótimo do VPL:</b> R$ {{ result['Valor ótimo do VPL em R$'] }}</p>
                 <p><b>Potência ótima do sistema fotovoltaico:</b> {{ result['Potência ótima do sistema fotovoltaico em kW'] }} kW</p>
                 <canvas id="grafico4"></canvas>
@@ -295,10 +334,15 @@ if (dados['opcao'] != 'Análise de sensibilidade da potência do sistema fotovol
     };
 
     // Renderizando o gráfico
+    {% if result['show_hide_fotovoltaico'] == 'on' %}
     var ctx1 = document.getElementById("grafico1");
     var myChart1 = new Chart(ctx1, config1);
+    {% endif %}
+
+    {% if result['show_hide_financiamento'] == 'on' %}
     var ctx2 = document.getElementById("grafico2");
     var myChart2 = new Chart(ctx2, config2);
+    {% endif %}
 }
 
 if (dados['opcao'] == 'Análise de sensibilidade do valor da recarga' || dados['opcao'] == 'Análise de sensibilidade da recarga por dia') {
@@ -454,12 +498,18 @@ async function generatePDF() {
     addContent("Número de eletropostos: {{ result['num_eletropostos'] }}");
     addContent("Potência do eletroposto: {{ result['pot_eletroposto'] }} kW");
     addContent("Recarga: {{ result['recarga_dia'] }} h/dia");
+    {% if result['show_hide_fotovoltaico'] == 'on' %}
     addContent("Potência do sistema fotovoltaico: {{ result['pot_fv'] }} kW");
     addContent("Horas de irradiação solar média por dia: {{ result['h_inc'] }} horas");
     addContent("Performance ratio: {{ result['pr'] }}");
     addContent("Perda de eficiência anual do sistema: {{ result['perda_eficiencia_anual'] }}");
+    {% else %}
+    addContent("Sem sistema fotovoltaico");
+    {% endif %}
     addContent("Preço de cada eletroposto: R$ {{ result['preco_eletroposto'] }}");
+    {% if result['show_hide_fotovoltaico'] == 'on' %}
     addContent("Preço do sistema fotovoltaico: {{ result['preco_fv'] }} R$/kWp");
+    {% endif %}
     addContent("Outros custos de implantação: R$ {{ result['implantacao'] }}");
     addContent("Valor da operação por eletroposto: {{ result['o_e_m'] }} R$/ano");
     addContent("Valor da recarga: {{ result['valor_recarga'] }} R$/kWh");
@@ -467,10 +517,14 @@ async function generatePDF() {
     addContent("Taxa Mínima de Atratividade: {{ result['tma'] }}");
     addContent("Aluguel: {{ result['aluguel_mes'] }} R$/mês");
     addContent("Vida útil financeira do fluxo de caixa: {{ result['vida_util'] }} anos");
+    {% if result['show_hide_financiamento'] == 'on' %}
     addContent("Percentual a ser financiado: {{ result['perc_finan'] }} %");
     addContent("Número total de prestações: {{ result['numero_prestacoes'] }} meses");
     addContent("Taxa de juros anual: {{ result['taxa_juros_anual'] }}");
     addContent("Tipo de financiamento: {{ result['tipo_financiamento'] }}");
+    {% else %}
+    addContent("Sem financiamento");
+    {% endif %}
 
     {% if result['opcao'] == 'Análise de sensibilidade do valor da recarga' %}
     addContent("Recarga por dia: {{ result['Recarga por dia'] }} horas");
@@ -485,7 +539,7 @@ async function generatePDF() {
     {% endfor %}
     {% endif %}
 
-    {% if result['opcao'] != 'Análise de sensibilidade da potência do sistema fotovoltaico' %}
+    {% if result['opcao'] != 'Análise de sensibilidade da potência do sistema fotovoltaico' and result['show_hide_fotovoltaico'] == 'on' %}
     if (yPosition + (lineHeight * 10) > pdf.internal.pageSize.height - margin) {
         pdf.addPage();
         yPosition = margin;
@@ -509,6 +563,7 @@ async function generatePDF() {
     {% for indice in range(result['Faturas concessionária']|length) %}
     addContent("- Ano {{ indice + 1 }}: R$ {{ result['Faturas concessionária'][indice] }}", 30);
     {% endfor %}
+    {% if result['show_hide_fotovoltaico'] == 'on' %}
     addContent("Abatimento de energia:");
     {% for indice in range(result['Abatimento de energia']|length) %}
     addContent("- Ano {{ indice + 1 }}: {{ result['Abatimento de energia'][indice] }} kWh", 30);
@@ -518,8 +573,9 @@ async function generatePDF() {
     addContent("- Ano {{ indice + 1 }}: {{ result['Créditos restantes'][indice] }} kWh", 30);
     {% endfor %}
     {% endif %}
+    {% endif %}
 
-    {% if result['opcao'] != 'Análise de sensibilidade da potência do sistema fotovoltaico' %}
+    {% if result['opcao'] != 'Análise de sensibilidade da potência do sistema fotovoltaico' and result['show_hide_financiamento'] == 'on' %}
     if (yPosition + (lineHeight * 10) > pdf.internal.pageSize.height - margin) {
         pdf.addPage();
         yPosition = margin;
@@ -576,7 +632,9 @@ async function generatePDF() {
             'Fatura de energia (-)',
             'O&M (-)',
             'Aluguel (-)',
+            {% if result['show_hide_financiamento'] == 'on' %}
             'Financiamento (-)',
+            {% endif %}
             'Fluxo de Caixa (=)']],
     body: [
         {% for indice in range(result['anos']|length) %}
@@ -586,7 +644,9 @@ async function generatePDF() {
              'R$ {{ result['Fatura de energia'][indice] }}',
              'R$ {{ result['O&M'][indice] }}',
              'R$ {{ result['Aluguel'][indice] }}',
+             {% if result['show_hide_financiamento'] == 'on' %}
              'R$ {{ result['Financiamento'][indice] }}',
+             {% endif %}
              'R$ {{ result['Fluxo de Caixa'][indice] }}'],
             {% endfor %}
         ]
@@ -616,18 +676,30 @@ async function generatePDF() {
     });
     yPosition = pdf.previousAutoTable.finalY + 10;
     addContent("Investimento inicial: R$ {{ result['Investimento inicial'] }}");
+    {% if result['show_hide_financiamento'] == 'on' %}
     addContent("Valor financiado: R$ {{ result['Valor financiado'] }}");
+    {% endif %}
     addContent("Indicadores Econômicos");
     addContent("- VPL: R$ {{ result['VPL'] }}", 30);
     addContent("- TIR: {{ result['TIR'] }} %", 30);
     {% if 'Payback Descontado' in result %}
     addContent("- Payback Descontado: {{ result['Payback Descontado'] }} anos", 30);
     {% else %}
-    addContent("O payback descontado não foi atingido", 30);
+    addContent("- O payback descontado não foi atingido", 30);
     {% endif %}
     {% endif %}
 
     {% if result['opcao'] == 'Análise de sensibilidade do valor da recarga' or result['opcao'] == 'Análise de sensibilidade da recarga por dia' %}
+    {% if result['opcao'] == 'Análise de sensibilidade do valor da recarga' %}
+        addContent("Variação do valor da recarga considerada na análise de sensibilidade:");
+        addContent("- Limite inferior: R$ {{ result['valor_recarga_inicial'] }}", 30);
+        addContent("- Limite superior: R$ {{ result['valor_recarga_final'] }}", 30);
+    {% endif %}
+    {% if result['opcao'] == 'Análise de sensibilidade da recarga por dia' %}
+        addContent("Variação da recarga por dia considerada na análise de sensibilidade:");
+        addContent("- Limite inferior: {{ result['recarga_dia_inicial'] }} h/dia", 30);
+        addContent("- Limite superior: {{ result['recarga_dia_final'] }} h/dia", 30);
+    {% endif %}
     if (yPosition + (lineHeight * 14) > pdf.internal.pageSize.height - margin) {
         pdf.addPage();
         yPosition = margin;
@@ -641,6 +713,9 @@ async function generatePDF() {
     {% endif %}
 
     {% if result['opcao'] == 'Análise de sensibilidade da potência do sistema fotovoltaico' %}
+    addContent("Variação da potência do sistema fotovoltaico considerada na análise de sensibilidade:");
+    addContent("- Limite inferior: {{ result['pot_fv_inicial'] }} kW", 30);
+    addContent("- Limite superior: {{ result['pot_fv_final'] }} kW", 30);
     addContent("Valor ótimo do VPL: R$ {{ result['Valor ótimo do VPL em R$'] }}");
     addContent("Potência ótima do sistema fotovoltaico: {{ result['Potência ótima do sistema fotovoltaico em kW'] }} kW");
     if (yPosition + (lineHeight * 14) > pdf.internal.pageSize.height - margin) {
