@@ -81,9 +81,16 @@ def index():
         opcao_selecionada = request.form.get('opcao_selecionada')
 
         # Sistema de compensação de energia elétrica
-        tusd = 0.3
-        fator_simult = 0.35             # Fator de simultaneidade entre consumo e geração
-        custo_disponibilidade = 100     # Monofásico = 30 kWh; Bifásico = 50 kWh; Trifásico = 100 kWh.
+        tusd = float(request.form.get('tusd')) if request.form.get('tusd') \
+            else 0.3
+        fator_simult = float(request.form.get('fator_simult')) if request.form.get('fator_simult') else 0.35 # Fator de simultaneidade entre consumo e geração
+        tipo_consumidor = request.form.get('tipo_consumidor')
+        if tipo_consumidor == 'monofasico':
+            custo_disponibilidade = 30     # Monofásico = 30 kWh; Bifásico = 50 kWh; Trifásico = 100 kWh.
+        elif tipo_consumidor == 'bifasico':
+            custo_disponibilidade = 50
+        elif tipo_consumidor == 'trifasico':
+            custo_disponibilidade = 100
 
         # Dados de sensibilidade
         valor_recarga_inicial = float(request.form.get('valor_recarga_inicial')) if request.form.get('valor_recarga_inicial')\

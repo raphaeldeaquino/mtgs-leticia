@@ -2,6 +2,24 @@
 {% set active_page = "viability" %}
 
 {% block script %}
+// Obtém os elementos de entrada e radio button
+const custoDisponibilidadeInput = document.getElementById('custo_disponibilidade');
+const radioButtons = document.querySelectorAll('input[name="tipo_consumidor"]');
+
+// Adiciona um ouvinte de evento de mudança a cada radio button
+radioButtons.forEach(radioButton => {
+    radioButton.addEventListener('change', function() {
+        // Verifica qual radio button está selecionado e atualiza o texto do custo_disponibilidade input
+        if (this.value === 'monofasico') {
+            custoDisponibilidadeInput.placeholder = "Custo de disponibilidade: 30 kWh";
+        } else if (this.value === 'bifasico') {
+            custoDisponibilidadeInput.placeholder = "Custo de disponibilidade: 50 kWh";
+        } else if (this.value === 'trifasico') {
+            custoDisponibilidadeInput.placeholder = "Custo de disponibilidade: 100 kWh";
+        }
+    });
+});
+
 function validateInputs() {
     var selectedOption = document.getElementById('opcao_selecionada').value;
     var errorMessage = document.getElementById('error_message');
@@ -243,34 +261,74 @@ function showHiddeFinanciamento() {
                                     </div>
                                 </div>
                                 <div class="col_half">
-                                    <div class="input_field" data-tip="Valor da tarifa de energia com impostos (R$/kWh)"><span><i aria-hidden="true"
-                                                                      class="fa-solid fa-dollar-sign"></i></span>
-                                        <input type="number" min="0" step=".01" name="tarifa_energia"
-                                               placeholder="Valor da tarifa de energia com impostos (R$/kWh) - Default: R$ 0,90"/>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row clearfix">
-                                <div class="col_half">
                                     <div class="input_field" data-tip="Taxa Mínima de Atratividade"><span><i aria-hidden="true"
                                                                       class="fa-solid fa-landmark"></i></span>
                                         <input type="number" name="tma" min="0" step=".01"
                                                placeholder="Taxa Mínima de Atratividade - Default: 0.1"/>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="row clearfix">
                                 <div class="col_half">
                                     <div class="input_field" data-tip="Aluguel (R$/mês)"><span><i aria-hidden="true" class="fa-solid fa-house"></i></span>
                                         <input type="number" min="0" step="100" name="aluguel_mes"
                                                placeholder="Aluguel (R$/mês) - Default: R$ 3.000,00"/>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row clearfix">
                                 <div class="col_half">
                                     <div class="input_field" data-tip="Vida útil financeira do fluxo de caixa (anos)"><span><i aria-hidden="true"
                                                                       class="fa-solid fa-timeline"></i></span>
                                         <input type="number" name="vida_util" min="1" step="1"
                                                placeholder="Vida útil financeira do fluxo de caixa (anos) - Default: 10 anos"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="input_field">
+                                <h3>Sistema de Compensação de Energia Elétrica</h3>
+                            </div>
+                            <div class="row clearfix">
+                                <div class="col_half">
+                                    <div class="input_field" data-tip="Valor da tarifa de energia com impostos (R$/kWh)"><span><i aria-hidden="true"
+                                                                      class="fa-solid fa-dollar-sign"></i></span>
+                                        <input type="number" min="0" step=".01" name="tarifa_energia"
+                                               placeholder="Valor da tarifa de energia com impostos (R$/kWh) - Default: R$ 0,90"/>
+                                    </div>
+                                </div>
+                                <div class="col_half">
+                                    <div class="input_field" data-tip="Tarifa de Uso dos Sistemas de Distribuição (R$/kWh)" style="display: block;"><span><i aria-hidden="true"
+                                                                      class="fa-solid fa-dollar-sign"></i></span>
+                                        <input type="number" min="0" step="0.01" name="tusd"
+                                               placeholder="Tarifa de Uso dos Sistemas de Distribuição (R$/kWh) - Default: 0,30 R$/kWh"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row clearfix">
+                                <div class="col_half">
+                                    <div class="input_field" data-tip="Fator de simultaneidade entre consumo e geração"><span><i aria-hidden="true"
+                                                                      class="fa-solid fa-bolt"></i></span>
+                                        <input type="number" name="fator_simult" min="0" step="0.01"
+                                               placeholder="Fator de simultaneidade entre consumo e geração - Default: 0,35"/>
+                                    </div>
+                                </div>
+                                <div class="col_half">
+                                </div>
+                            </div>
+                            <div class="row clearfix">
+                                <div class="col_half">
+                                    <div class="input_field" data-tip="Custo de disponibilidade (kWh)"><span><i aria-hidden="true"
+                                                                      class="fa-solid fa-bolt"></i></span>
+                                        <input type="number" id="custo_disponibilidade" name="custo_disponibilidade" min="0" step=".01"
+                                               placeholder="Custo de disponibilidade: 30 kWh" disabled />
+                                    </div>
+                                </div>
+                                <div class="col_half">
+                                    <div class="input_field radio_option">
+                                        <input type="radio" name="tipo_consumidor" id="monofasico" value="monofasico" checked >
+                                        <label for="monofasico">Monofásico</label>
+                                        <input type="radio" name="tipo_consumidor" id="bifasico" value="bifasico" >
+                                        <label for="bifasico">Bifásico</label>
+                                        <input type="radio" name="tipo_consumidor" id="trifasico" value="trifasico" >
+                                        <label for="trifasico">Trifásico</label>
                                     </div>
                                 </div>
                             </div>

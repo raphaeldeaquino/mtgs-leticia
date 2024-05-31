@@ -1299,6 +1299,14 @@ input:checked + .slider:before {
   transform: translateX(16px);
 }
 
+.input_field input:disabled {
+    background-color: #f0f0f0; /* Cor de fundo */
+    color: #999; /* Cor do texto */
+    border-color: #ccc; /* Cor da borda */
+    cursor: not-allowed; /* Cursor do mouse */
+    opacity: 0.7; /* Opacidade */
+}
+
 /* Rounded sliders */
 .slider.round {
   border-radius: 34px;
