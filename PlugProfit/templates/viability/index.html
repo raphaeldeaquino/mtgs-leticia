@@ -8,129 +8,138 @@ const radioButtons = document.querySelectorAll('input[name="tipo_consumidor"]');
 
 // Adiciona um ouvinte de evento de mudança a cada radio button
 radioButtons.forEach(radioButton => {
-    radioButton.addEventListener('change', function() {
-        // Verifica qual radio button está selecionado e atualiza o texto do custo_disponibilidade input
-        if (this.value === 'monofasico') {
-            custoDisponibilidadeInput.placeholder = "Custo de disponibilidade: 30 kWh";
-        } else if (this.value === 'bifasico') {
-            custoDisponibilidadeInput.placeholder = "Custo de disponibilidade: 50 kWh";
-        } else if (this.value === 'trifasico') {
-            custoDisponibilidadeInput.placeholder = "Custo de disponibilidade: 100 kWh";
-        }
-    });
+radioButton.addEventListener('change', function() {
+// Verifica qual radio button está selecionado e atualiza o texto do custo_disponibilidade input
+if (this.value === 'monofasico') {
+custoDisponibilidadeInput.placeholder = "Custo de disponibilidade: 30 kWh";
+} else if (this.value === 'bifasico') {
+custoDisponibilidadeInput.placeholder = "Custo de disponibilidade: 50 kWh";
+} else if (this.value === 'trifasico') {
+custoDisponibilidadeInput.placeholder = "Custo de disponibilidade: 100 kWh";
+}
+});
 });
 
 function validateInputs() {
-    var selectedOption = document.getElementById('opcao_selecionada').value;
-    var errorMessage = document.getElementById('error_message');
+var selectedOption = document.getElementById('opcao_selecionada').value;
+var errorMessage = document.getElementById('error_message');
 
-    if (selectedOption == '2') {
-        var valorInicial = document.getElementById('valor_recarga_inicial').value;
-        var valorFinal = document.getElementById('valor_recarga_final').value;
+if (selectedOption == '2') {
+var valorInicial = document.getElementById('valor_recarga_inicial').value;
+var valorFinal = document.getElementById('valor_recarga_final').value;
 
-        if (valorInicial !== '' && valorFinal !== '' && parseFloat(valorInicial) < parseFloat(valorFinal)) {
-            // Valores válidos
-            errorMessage.style.display = 'none';
-            errorMessage.textContent = '';
-            return true;
-        } else {
-            // Valores inválidos
-            errorMessage.style.display = 'block';
-            errorMessage.textContent = 'Por favor, preencha os campos corretamente. O limite inferior do valor da recarga deve ser menor que o limite superior.';
-            return false;
-        }
-    } else if (selectedOption == '3') {
-        var valorInicial = document.getElementById('recarga_dia_inicial').value;
-        var valorFinal = document.getElementById('recarga_dia_final').value;
+if (valorInicial !== '' && valorFinal !== '' && parseFloat(valorInicial) < parseFloat(valorFinal)) {
+// Valores válidos
+errorMessage.style.display = 'none';
+errorMessage.textContent = '';
+return true;
+} else {
+// Valores inválidos
+errorMessage.style.display = 'block';
+errorMessage.textContent = 'Por favor, preencha os campos corretamente. O limite inferior do valor da recarga deve ser menor que o limite superior.';
+return false;
+}
+} else if (selectedOption == '3') {
+var valorInicial = document.getElementById('recarga_dia_inicial').value;
+var valorFinal = document.getElementById('recarga_dia_final').value;
 
-        if (valorInicial !== '' && valorFinal !== '' && parseFloat(valorInicial) < parseFloat(valorFinal)) {
-            // Valores válidos
-            errorMessage.style.display = 'none';
-            errorMessage.textContent = '';
-            return true;
-        } else {
-            // Valores inválidos
-            errorMessage.style.display = 'block';
-            errorMessage.textContent = 'Por favor, preencha os campos corretamente. O limite inferior da recarga por dia deve ser menor que o limite superior.';
-            return false;
-        }
-    } else if (selectedOption == '4') {
-        var valorInicial = document.getElementById('pot_fv_inicial').value;
-        var valorFinal = document.getElementById('pot_fv_final').value;
+if (valorInicial !== '' && valorFinal !== '' && parseFloat(valorInicial) < parseFloat(valorFinal)) {
+// Valores válidos
+errorMessage.style.display = 'none';
+errorMessage.textContent = '';
+return true;
+} else {
+// Valores inválidos
+errorMessage.style.display = 'block';
+errorMessage.textContent = 'Por favor, preencha os campos corretamente. O limite inferior da recarga por dia deve ser menor que o limite superior.';
+return false;
+}
+} else if (selectedOption == '4') {
+var valorInicial = document.getElementById('pot_fv_inicial').value;
+var valorFinal = document.getElementById('pot_fv_final').value;
 
-        if (valorInicial !== '' && valorFinal !== '' && parseFloat(valorInicial) < parseFloat(valorFinal)) {
-            // Valores válidos
-            errorMessage.style.display = 'none';
-            errorMessage.textContent = '';
-            return true;
-        } else {
-            // Valores inválidos
-            errorMessage.style.display = 'block';
-            errorMessage.textContent = 'Por favor, preencha os campos corretamente. O limite inferior da potência do sistema fotovoltaico deve ser menor que o limite superior.';
-            return false;
-        }
-    }
-    return true;  // Permitir o envio do formulário para outras opções
+if (valorInicial !== '' && valorFinal !== '' && parseFloat(valorInicial) < parseFloat(valorFinal)) {
+// Valores válidos
+errorMessage.style.display = 'none';
+errorMessage.textContent = '';
+return true;
+} else {
+// Valores inválidos
+errorMessage.style.display = 'block';
+errorMessage.textContent = 'Por favor, preencha os campos corretamente. O limite inferior da potência do sistema fotovoltaico deve ser menor que o limite superior.';
+return false;
+}
+}
+return true;  // Permitir o envio do formulário para outras opções
 }
 
 function showHiddeField() {
-    var option = document.getElementById('opcao_selecionada').value;
-    var limitsPriceHiddenField = document.getElementById('limits_price_hidden_field');
-    var limitsLoadHiddenField = document.getElementById('limits_load_hidden_field');
-    var limitsPowerHiddenField = document.getElementById('limits_power_hidden_field');
-    var errorMessage = document.getElementById('error_message');
+var option = document.getElementById('opcao_selecionada').value;
+var limitsPriceHiddenField = document.getElementById('limits_price_hidden_field');
+var limitsLoadHiddenField = document.getElementById('limits_load_hidden_field');
+var limitsPowerHiddenField = document.getElementById('limits_power_hidden_field');
+var errorMessage = document.getElementById('error_message');
 
-    errorMessage.style.display = 'none';
-    errorMessage.textContent = '';
+errorMessage.style.display = 'none';
+errorMessage.textContent = '';
 
-    if (option === '2') {
-        limitsPriceHiddenField.style.display = 'block';
-    } else {
-        limitsPriceHiddenField.style.display = 'none';
-    }
+if (option === '2') {
+limitsPriceHiddenField.style.display = 'block';
+} else {
+limitsPriceHiddenField.style.display = 'none';
+}
 
-    if (option === '3') {
-        limitsLoadHiddenField.style.display = 'block';
-    } else {
-        limitsLoadHiddenField.style.display = 'none';
-    }
+if (option === '3') {
+limitsLoadHiddenField.style.display = 'block';
+} else {
+limitsLoadHiddenField.style.display = 'none';
+}
 
-    if (option == '4') {
-        limitsPowerHiddenField.style.display = 'block';
-    } else {
-        limitsPowerHiddenField.style.display = 'none';
-    }
+if (option == '4') {
+limitsPowerHiddenField.style.display = 'block';
+} else {
+limitsPowerHiddenField.style.display = 'none';
+}
 }
 
 function showHiddeFotovoltaico() {
-    var checkbox = document.getElementById('show_hide_fotovoltaico');
-    var dados_sistema_fotovoltaico = document.getElementById('dados_sistema_fotovoltaico');
-    var sem_fotovoltaico = document.getElementById('sem_fotovoltaico');
-    var preco_fv = document.getElementById('preco_fv');
+var checkbox = document.getElementById('show_hide_fotovoltaico');
+var dados_sistema_fotovoltaico = document.getElementById('dados_sistema_fotovoltaico');
+var sem_fotovoltaico = document.getElementById('sem_fotovoltaico');
+var preco_fv = document.getElementById('preco_fv');
+var scee1 = document.getElementById('scee1');
+var scee2 = document.getElementById('scee2');
+var scee3 = document.getElementById('scee3');
 
-    if (checkbox.checked) {
-        dados_sistema_fotovoltaico.style.display = 'block';
-        preco_fv.style.display = 'block';
-        sem_fotovoltaico.style.display = 'none';
-    } else {
-        dados_sistema_fotovoltaico.style.display = 'none';
-        preco_fv.style.display = 'none';
-        sem_fotovoltaico.style.display = 'block';
-    }
+if (checkbox.checked) {
+dados_sistema_fotovoltaico.style.display = 'block';
+preco_fv.style.display = 'block';
+scee1.style.display = 'block';
+scee2.style.display = 'block';
+scee3.style.display = 'block';
+sem_fotovoltaico.style.display = 'none';
+} else {
+dados_sistema_fotovoltaico.style.display = 'none';
+preco_fv.style.display = 'none';
+scee1.style.display = 'none';
+scee2.style.display = 'none';
+scee3.style.display = 'none';
+sem_fotovoltaico.style.display = 'block';
+}
 }
 
 function showHiddeFinanciamento() {
-    var checkbox = document.getElementById('show_hide_financiamento');
-    var dados_financiamento = document.getElementById('dados_financiamento');
-    var sem_financiamento = document.getElementById('sem_financiamento');
+var checkbox = document.getElementById('show_hide_financiamento');
+var dados_financiamento = document.getElementById('dados_financiamento');
+var sem_financiamento = document.getElementById('sem_financiamento');
 
-    if (checkbox.checked) {
-        dados_financiamento.style.display = 'block';
-        sem_financiamento.style.display = 'none';
-    } else {
-        dados_financiamento.style.display = 'none';
-        sem_financiamento.style.display = 'block';
-    }
+if (checkbox.checked) {
+dados_financiamento.style.display = 'block';
+sem_financiamento.style.display = 'none';
+} else {
+dados_financiamento.style.display = 'none';
+sem_financiamento.style.display = 'block';
+}
 }
 {% endblock %}
 
@@ -144,21 +153,24 @@ function showHiddeFinanciamento() {
                 </div>
                 <div class="row clearfix">
                     <div class="">
-                        <form id="input_form" method="POST" enctype="multipart/form-data" onsubmit="return validateInputs();">
+                        <form id="input_form" method="POST" enctype="multipart/form-data"
+                              onsubmit="return validateInputs();">
                             <div class="input_field">
                                 <h3>Dados dos eletropostos</h3>
                             </div>
                             <div class="row clearfix">
                                 <div class="col_half">
-                                    <div class="input_field" data-tip="Número de eletropostos"><span><i aria-hidden="true"
-                                                                      class="fas fa-gas-pump"></i></span>
+                                    <div class="input_field" data-tip="Número de eletropostos"><span><i
+                                            aria-hidden="true"
+                                            class="fas fa-gas-pump"></i></span>
                                         <input type="number" name="num_eletropostos" min="1" step="1"
                                                placeholder="Número de eletropostos - Default: 1"/>
                                     </div>
                                 </div>
                                 <div class="col_half">
-                                    <div class="input_field" data-tip="Potência do eletroposto (kW)"><span><i aria-hidden="true"
-                                                                      class="fa-solid fa-bolt"></i></span>
+                                    <div class="input_field" data-tip="Potência do eletroposto (kW)"><span><i
+                                            aria-hidden="true"
+                                            class="fa-solid fa-bolt"></i></span>
                                         <input type="number" min="0" name="pot_eletroposto" step=".1"
                                                placeholder="Potência do eletroposto (kW) - Default: 22 kW"/>
                                     </div>
@@ -166,7 +178,8 @@ function showHiddeFinanciamento() {
                             </div>
                             <div class="row clearfix">
                                 <div class="col_half">
-                                    <div class="input_field" data-tip="Recarga (h/dia)"><span><i aria-hidden="true" class="fa-solid fa-clock"></i></span>
+                                    <div class="input_field" data-tip="Recarga (h/dia)"><span><i aria-hidden="true"
+                                                                                                 class="fa-solid fa-clock"></i></span>
                                         <input type="number" min="0" max="24" name="recarga_dia" step="1"
                                                placeholder="Recarga (h/dia) - Default: 6 h"/>
                                     </div>
@@ -174,63 +187,72 @@ function showHiddeFinanciamento() {
                             </div>
                             <div class="input_field">
                                 <label class="switch">
-                                  <input type="checkbox" name="show_hide_fotovoltaico" id="show_hide_fotovoltaico" checked  onchange="showHiddeFotovoltaico();">
-                                  <span class="slider round"></span>
+                                    <input type="checkbox" name="show_hide_fotovoltaico" id="show_hide_fotovoltaico"
+                                           checked onchange="showHiddeFotovoltaico();">
+                                    <span class="slider round"></span>
                                 </label>
                                 <h3>Dados do sistema fotovoltaico</h3>
                             </div>
                             <div id="dados_sistema_fotovoltaico">
-                            <div class="row clearfix">
-                                <div class="col_half">
-                                    <div class="input_field" data-tip="Potência do sistema fotovoltaico (kW)"><span><i aria-hidden="true"
-                                                                      class="fa-solid fa-solar-panel"></i></span>
-                                        <input type="number" name="pot_fv" min="0" step=".1"
-                                               placeholder="Potência do sistema fotovoltaico (kW) - Default: 125 kW"/>
+                                <div class="row clearfix">
+                                    <div class="col_half">
+                                        <div class="input_field" data-tip="Potência do sistema fotovoltaico (kW)"><span><i
+                                                aria-hidden="true"
+                                                class="fa-solid fa-solar-panel"></i></span>
+                                            <input type="number" name="pot_fv" min="0" step=".1"
+                                                   placeholder="Potência do sistema fotovoltaico (kW) - Default: 125 kW"/>
+                                        </div>
+                                    </div>
+                                    <div class="col_half">
+                                        <div class="input_field" data-tip="Horas de irradiação solar média por dia">
+                                            <span><i aria-hidden="true" class="fa-solid fa-clock"></i></span>
+                                            <input type="number" min="0" name="h_inc" step=".01"
+                                                   placeholder="Horas de irradiação solar média por dia - Default: 5.45"/>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col_half">
-                                    <div class="input_field" data-tip="Horas de irradiação solar média por dia"><span><i aria-hidden="true" class="fa-solid fa-clock"></i></span>
-                                        <input type="number" min="0" name="h_inc" step=".01"
-                                               placeholder="Horas de irradiação solar média por dia - Default: 5.45"/>
+                                <div class="row clearfix">
+                                    <div class="col_half">
+                                        <div class="input_field" data-tip="Performance ratio"><span><i
+                                                aria-hidden="true"
+                                                class="fa-solid fa-chart-simple"></i></span>
+                                            <input type="number" name="pr" min="0" max="1" step=".01"
+                                                   placeholder="Performance ratio - Default: 0.80"/>
+                                        </div>
+                                    </div>
+                                    <div class="col_half">
+                                        <div class="input_field"
+                                             data-tip="Perda de eficiência anual do sistema (decimal)"><span><i
+                                                aria-hidden="true"
+                                                class="fa-solid fa-arrow-turn-down"></i></span>
+                                            <input type="number" min="0" step=".001" name="perda_eficiencia_anual"
+                                                   placeholder="Perda de eficiência anual do sistema (decimal) - Default: 0.016"/>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row clearfix">
-                                <div class="col_half">
-                                    <div class="input_field" data-tip="Performance ratio"><span><i aria-hidden="true"
-                                                                      class="fa-solid fa-chart-simple"></i></span>
-                                        <input type="number" name="pr" min="0" max="1" step=".01"
-                                               placeholder="Performance ratio - Default: 0.80"/>
-                                    </div>
-                                </div>
-                                <div class="col_half">
-                                    <div class="input_field" data-tip="Perda de eficiência anual do sistema (decimal)"><span><i aria-hidden="true"
-                                                                      class="fa-solid fa-arrow-turn-down"></i></span>
-                                        <input type="number" min="0" step=".001" name="perda_eficiencia_anual"
-                                               placeholder="Perda de eficiência anual do sistema (decimal) - Default: 0.016"/>
-                                    </div>
-                                </div>
-                            </div>
                             </div>
                             <div class="row clearfix" id="sem_fotovoltaico" style="display: none;">
                                 <div class="input_field">
-                                Sem sistema fotovoltaico
-                                    </div>
+                                    Sem sistema fotovoltaico
+                                </div>
                             </div>
                             <div class="input_field">
                                 <h3>Dados econômicos</h3>
                             </div>
                             <div class="row clearfix">
                                 <div class="col_half">
-                                    <div class="input_field" data-tip="Preço de cada eletroposto (R$)"><span><i aria-hidden="true"
-                                                                      class="fa-solid fa-dollar-sign"></i></span>
+                                    <div class="input_field" data-tip="Preço de cada eletroposto (R$)"><span><i
+                                            aria-hidden="true"
+                                            class="fa-solid fa-dollar-sign"></i></span>
                                         <input type="number" name="preco_eletroposto" min="0" step="1000"
                                                placeholder="Preço de cada eletroposto (R$) - Default: R$ 120.000,00"/>
                                     </div>
                                 </div>
                                 <div class="col_half">
-                                    <div class="input_field" id="preco_fv" data-tip="Preço do sistema fotovoltaico (R$/kWp)" style="display: block;"><span><i aria-hidden="true"
-                                                                      class="fa-solid fa-dollar-sign"></i></span>
+                                    <div class="input_field" id="preco_fv"
+                                         data-tip="Preço do sistema fotovoltaico (R$/kWp)"
+                                         style="display: block;"><span><i aria-hidden="true"
+                                                                          class="fa-solid fa-dollar-sign"></i></span>
                                         <input type="number" min="0" step="100" name="preco_fv"
                                                placeholder="Preço do sistema fotovoltaico (R$/kWp) - Default: R$ 5.000,00"/>
                                     </div>
@@ -238,15 +260,18 @@ function showHiddeFinanciamento() {
                             </div>
                             <div class="row clearfix">
                                 <div class="col_half">
-                                    <div class="input_field" data-tip="Outros custos de implantação (R$)"><span><i aria-hidden="true"
-                                                                      class="fa-solid fa-dollar-sign"></i></span>
+                                    <div class="input_field" data-tip="Outros custos de implantação (R$)"><span><i
+                                            aria-hidden="true"
+                                            class="fa-solid fa-dollar-sign"></i></span>
                                         <input type="number" name="implantacao" min="0" step="1000"
                                                placeholder="Outros custos de implantação (R$) - Default: R$ 30.000,00"/>
                                     </div>
                                 </div>
                                 <div class="col_half">
-                                    <div class="input_field" data-tip="Valor da operação por eletroposto (R$/ano)"><span><i aria-hidden="true"
-                                                                      class="fa-solid fa-dollar-sign"></i></span>
+                                    <div class="input_field"
+                                         data-tip="Valor da operação por eletroposto (R$/ano)"><span><i
+                                            aria-hidden="true"
+                                            class="fa-solid fa-dollar-sign"></i></span>
                                         <input type="number" min="0" step="100" name="o_e_m"
                                                placeholder="Valor da operação por eletroposto (R$/ano) - Default: R$ 10.000,00"/>
                                     </div>
@@ -254,15 +279,17 @@ function showHiddeFinanciamento() {
                             </div>
                             <div class="row clearfix">
                                 <div class="col_half">
-                                    <div class="input_field" data-tip="Valor da recarga (R$/kWh)"><span><i aria-hidden="true"
-                                                                      class="fa-solid fa-dollar-sign"></i></span>
+                                    <div class="input_field" data-tip="Valor da recarga (R$/kWh)"><span><i
+                                            aria-hidden="true"
+                                            class="fa-solid fa-dollar-sign"></i></span>
                                         <input type="number" name="valor_recarga" min="0" step=".01"
                                                placeholder="Valor da recarga (R$/kWh) - Default: R$ 2,00"/>
                                     </div>
                                 </div>
                                 <div class="col_half">
-                                    <div class="input_field" data-tip="Taxa Mínima de Atratividade"><span><i aria-hidden="true"
-                                                                      class="fa-solid fa-landmark"></i></span>
+                                    <div class="input_field" data-tip="Taxa Mínima de Atratividade"><span><i
+                                            aria-hidden="true"
+                                            class="fa-solid fa-landmark"></i></span>
                                         <input type="number" name="tma" min="0" step=".01"
                                                placeholder="Taxa Mínima de Atratividade - Default: 0.1"/>
                                     </div>
@@ -270,14 +297,17 @@ function showHiddeFinanciamento() {
                             </div>
                             <div class="row clearfix">
                                 <div class="col_half">
-                                    <div class="input_field" data-tip="Aluguel (R$/mês)"><span><i aria-hidden="true" class="fa-solid fa-house"></i></span>
+                                    <div class="input_field" data-tip="Aluguel (R$/mês)"><span><i aria-hidden="true"
+                                                                                                  class="fa-solid fa-house"></i></span>
                                         <input type="number" min="0" step="100" name="aluguel_mes"
                                                placeholder="Aluguel (R$/mês) - Default: R$ 3.000,00"/>
                                     </div>
                                 </div>
                                 <div class="col_half">
-                                    <div class="input_field" data-tip="Vida útil financeira do fluxo de caixa (anos)"><span><i aria-hidden="true"
-                                                                      class="fa-solid fa-timeline"></i></span>
+                                    <div class="input_field"
+                                         data-tip="Vida útil financeira do fluxo de caixa (anos)"><span><i
+                                            aria-hidden="true"
+                                            class="fa-solid fa-timeline"></i></span>
                                         <input type="number" name="vida_util" min="1" step="1"
                                                placeholder="Vida útil financeira do fluxo de caixa (anos) - Default: 10 anos"/>
                                     </div>
@@ -288,24 +318,29 @@ function showHiddeFinanciamento() {
                             </div>
                             <div class="row clearfix">
                                 <div class="col_half">
-                                    <div class="input_field" data-tip="Valor da tarifa de energia com impostos (R$/kWh)"><span><i aria-hidden="true"
-                                                                      class="fa-solid fa-dollar-sign"></i></span>
+                                    <div class="input_field"
+                                         data-tip="Valor da tarifa de energia com impostos (R$/kWh)"><span><i
+                                            aria-hidden="true"
+                                            class="fa-solid fa-dollar-sign"></i></span>
                                         <input type="number" min="0" step=".01" name="tarifa_energia"
                                                placeholder="Valor da tarifa de energia com impostos (R$/kWh) - Default: R$ 0,90"/>
                                     </div>
                                 </div>
                                 <div class="col_half">
-                                    <div class="input_field" data-tip="Tarifa de Uso dos Sistemas de Distribuição (R$/kWh)" style="display: block;"><span><i aria-hidden="true"
-                                                                      class="fa-solid fa-dollar-sign"></i></span>
+                                    <div class="input_field" id="scee1"
+                                         data-tip="Tarifa de Uso dos Sistemas de Distribuição (R$/kWh)"
+                                         style="display: block;"><span><i aria-hidden="true"
+                                                                          class="fa-solid fa-dollar-sign"></i></span>
                                         <input type="number" min="0" step="0.01" name="tusd"
                                                placeholder="Tarifa de Uso dos Sistemas de Distribuição (R$/kWh) - Default: 0,30 R$/kWh"/>
                                     </div>
                                 </div>
                             </div>
-                            <div class="row clearfix">
+                            <div class="row clearfix" id="scee2" style="display: block;">
                                 <div class="col_half">
-                                    <div class="input_field" data-tip="Fator de simultaneidade entre consumo e geração"><span><i aria-hidden="true"
-                                                                      class="fa-solid fa-bolt"></i></span>
+                                    <div class="input_field" data-tip="Fator de simultaneidade entre consumo e geração"><span><i
+                                            aria-hidden="true"
+                                            class="fa-solid fa-bolt"></i></span>
                                         <input type="number" name="fator_simult" min="0" step="0.01"
                                                placeholder="Fator de simultaneidade entre consumo e geração - Default: 0,35"/>
                                     </div>
@@ -313,72 +348,81 @@ function showHiddeFinanciamento() {
                                 <div class="col_half">
                                 </div>
                             </div>
-                            <div class="row clearfix">
+                            <div class="row clearfix" id="scee3" style="display: block;">
                                 <div class="col_half">
-                                    <div class="input_field" data-tip="Custo de disponibilidade (kWh)"><span><i aria-hidden="true"
-                                                                      class="fa-solid fa-bolt"></i></span>
-                                        <input type="number" id="custo_disponibilidade" name="custo_disponibilidade" min="0" step=".01"
-                                               placeholder="Custo de disponibilidade: 30 kWh" disabled />
+                                    <div class="input_field" data-tip="Custo de disponibilidade (kWh)"><span><i
+                                            aria-hidden="true"
+                                            class="fa-solid fa-bolt"></i></span>
+                                        <input type="number" id="custo_disponibilidade" name="custo_disponibilidade"
+                                               min="0" step=".01"
+                                               placeholder="Custo de disponibilidade: 30 kWh" disabled/>
                                     </div>
                                 </div>
                                 <div class="col_half">
                                     <div class="input_field radio_option">
-                                        <input type="radio" name="tipo_consumidor" id="monofasico" value="monofasico" checked >
+                                        <input type="radio" name="tipo_consumidor" id="monofasico" value="monofasico"
+                                               checked>
                                         <label for="monofasico">Monofásico</label>
-                                        <input type="radio" name="tipo_consumidor" id="bifasico" value="bifasico" >
+                                        <input type="radio" name="tipo_consumidor" id="bifasico" value="bifasico">
                                         <label for="bifasico">Bifásico</label>
-                                        <input type="radio" name="tipo_consumidor" id="trifasico" value="trifasico" >
+                                        <input type="radio" name="tipo_consumidor" id="trifasico" value="trifasico">
                                         <label for="trifasico">Trifásico</label>
                                     </div>
                                 </div>
                             </div>
                             <div class="input_field">
                                 <label class="switch">
-                                  <input type="checkbox" name="show_hide_financiamento" id="show_hide_financiamento" checked  onchange="showHiddeFinanciamento();">
-                                  <span class="slider round"></span>
+                                    <input type="checkbox" name="show_hide_financiamento" id="show_hide_financiamento"
+                                           checked onchange="showHiddeFinanciamento();">
+                                    <span class="slider round"></span>
                                 </label>
                                 <h3>Dados de financiamento</h3>
                             </div>
                             <div id="dados_financiamento">
-                            <div class="row clearfix">
-                                <div class="col_half">
-                                    <div class="input_field" data-tip="Percentual a ser financiado de 0 a 100 (%)"><span><i aria-hidden="true"
-                                                                      class="fa-solid fa-percent"></i></span>
-                                        <input type="number" name="perc_finan" min="0" max="100" step="1"
-                                               placeholder="Percentual a ser financiado de 0 a 100 (%) - Default: 30%" />
+                                <div class="row clearfix">
+                                    <div class="col_half">
+                                        <div class="input_field"
+                                             data-tip="Percentual a ser financiado de 0 a 100 (%)"><span><i
+                                                aria-hidden="true"
+                                                class="fa-solid fa-percent"></i></span>
+                                            <input type="number" name="perc_finan" min="0" max="100" step="1"
+                                                   placeholder="Percentual a ser financiado de 0 a 100 (%) - Default: 30%"/>
+                                        </div>
+                                    </div>
+                                    <div class="col_half">
+                                        <div class="input_field" data-tip="Número total de prestações (meses)"><span><i
+                                                aria-hidden="true"
+                                                class="fa-solid fa-calendar-days"></i></span>
+                                            <input type="number" min="0" step="1" name="numero_prestacoes"
+                                                   placeholder="Número total de prestações (meses) - Default: 12 meses"/>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col_half">
-                                    <div class="input_field" data-tip="Número total de prestações (meses)"><span><i aria-hidden="true"
-                                                                      class="fa-solid fa-calendar-days"></i></span>
-                                        <input type="number" min="0" step="1" name="numero_prestacoes"
-                                               placeholder="Número total de prestações (meses) - Default: 12 meses" />
+                                <div class="row clearfix">
+                                    <div class="col_half">
+                                        <div class="input_field" data-tip="Taxa de juros anual (decimal)"><span><i
+                                                aria-hidden="true"
+                                                class="fa-solid fa-money-bill-trend-up"></i></span>
+                                            <input type="number" name="taxa_juros_anual" min="0" step=".01"
+                                                   placeholder="Taxa de juros anual - Default: 5%"/>
+                                        </div>
+                                    </div>
+                                    <div class="col_half">
+                                        Tipo de financiamento:
+                                        <div class="input_field radio_option">
+                                            <input type="radio" name="tipo_financiamento" id="price" value="price"
+                                                   checked>
+                                            <label for="price">price</label>
+                                            <input type="radio" name="tipo_financiamento" id="sac" value="sac">
+                                            <label for="sac">sac</label>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row clearfix">
-                                <div class="col_half">
-                                    <div class="input_field" data-tip="Taxa de juros anual (decimal)"><span><i aria-hidden="true"
-                                                                      class="fa-solid fa-money-bill-trend-up"></i></span>
-                                        <input type="number" name="taxa_juros_anual" min="0" step=".01"
-                                               placeholder="Taxa de juros anual - Default: 5%" />
-                                    </div>
-                                </div>
-                                <div class="col_half">
-                                    Tipo de financiamento:
-                                    <div class="input_field radio_option">
-                                        <input type="radio" name="tipo_financiamento" id="price" value="price" checked >
-                                        <label for="price">price</label>
-                                        <input type="radio" name="tipo_financiamento" id="sac" value="sac" >
-                                        <label for="sac">sac</label>
-                                    </div>
-                                </div>
-                            </div>
                             </div>
                             <div class="row clearfix" id="sem_financiamento" style="display: none;">
                                 <div class="input_field">
-                                Sem financiamento
-                                    </div>
+                                    Sem financiamento
+                                </div>
                             </div>
                             <div class="input_field">
                                 <h3>Tipo de análise</h3>
@@ -389,23 +433,28 @@ function showHiddeFinanciamento() {
                                     <option value="1">Sem análise de sensibilidade</option>
                                     <option value="2">Análise de sensibilidade do valor da recarga</option>
                                     <option value="3">Análise de sensibilidade da recarga por dia</option>
-                                    <option value="4">Análise de sensibilidade da potência do sistema fotovoltaico</option>
+                                    <option value="4">Análise de sensibilidade da potência do sistema fotovoltaico
+                                    </option>
                                 </select>
                                 <div class="select_arrow"></div>
                             </div>
                             <div id="limits_price_hidden_field" style="display: none;">
                                 <div class="row clearfix">
                                     <div class="col_half">
-                                        <div class="input_field" data-tip="Limite inferior do valor da recarga"><span><i aria-hidden="true"
-                                                                          class="fa-solid fa-arrow-down"></i></span>
-                                            <input type="number" id="valor_recarga_inicial" name="valor_recarga_inicial" min="0" step="0.01"
+                                        <div class="input_field" data-tip="Limite inferior do valor da recarga"><span><i
+                                                aria-hidden="true"
+                                                class="fa-solid fa-arrow-down"></i></span>
+                                            <input type="number" id="valor_recarga_inicial" name="valor_recarga_inicial"
+                                                   min="0" step="0.01"
                                                    placeholder="Limite inferior do valor da recarga"/>
                                         </div>
                                     </div>
                                     <div class="col_half">
-                                        <div class="input_field" data-tip="Limite superior do valor da recarga"><span><i aria-hidden="true"
-                                                                          class="fa-solid fa-arrow-up"></i></span>
-                                            <input type="number" id="valor_recarga_final" name="valor_recarga_final" min="0" step="0.01"
+                                        <div class="input_field" data-tip="Limite superior do valor da recarga"><span><i
+                                                aria-hidden="true"
+                                                class="fa-solid fa-arrow-up"></i></span>
+                                            <input type="number" id="valor_recarga_final" name="valor_recarga_final"
+                                                   min="0" step="0.01"
                                                    placeholder="Limite superior do valor da recarga"/>
                                         </div>
                                     </div>
@@ -414,16 +463,20 @@ function showHiddeFinanciamento() {
                             <div id="limits_load_hidden_field" style="display: none;">
                                 <div class="row clearfix">
                                     <div class="col_half">
-                                        <div class="input_field" data-tip="Limite inferior da recarga por dia"><span><i aria-hidden="true"
-                                                                          class="fa-solid fa-arrow-down"></i></span>
-                                            <input type="number" id="recarga_dia_inicial" name="recarga_dia_inicial" min="0" step="0.01"
+                                        <div class="input_field" data-tip="Limite inferior da recarga por dia"><span><i
+                                                aria-hidden="true"
+                                                class="fa-solid fa-arrow-down"></i></span>
+                                            <input type="number" id="recarga_dia_inicial" name="recarga_dia_inicial"
+                                                   min="0" step="0.01"
                                                    placeholder="Limite inferior da recarga por dia"/>
                                         </div>
                                     </div>
                                     <div class="col_half">
-                                        <div class="input_field" data-tip="Limite superior da recarga por dia"><span><i aria-hidden="true"
-                                                                          class="fa-solid fa-arrow-up"></i></span>
-                                            <input type="number" id="recarga_dia_final" name="recarga_dia_final" min="0" step="0.01"
+                                        <div class="input_field" data-tip="Limite superior da recarga por dia"><span><i
+                                                aria-hidden="true"
+                                                class="fa-solid fa-arrow-up"></i></span>
+                                            <input type="number" id="recarga_dia_final" name="recarga_dia_final" min="0"
+                                                   step="0.01"
                                                    placeholder="Limite superior da recarga por dia"/>
                                         </div>
                                     </div>
@@ -432,16 +485,22 @@ function showHiddeFinanciamento() {
                             <div id="limits_power_hidden_field" style="display: none;">
                                 <div class="row clearfix">
                                     <div class="col_half">
-                                        <div class="input_field" data-tip="Limite inferior da potência do sistema fotovoltaico"><span><i aria-hidden="true"
-                                                                          class="fa-solid fa-arrow-down"></i></span>
-                                            <input type="number" id="pot_fv_inicial" name="pot_fv_inicial" min="0" step="0.01"
+                                        <div class="input_field"
+                                             data-tip="Limite inferior da potência do sistema fotovoltaico"><span><i
+                                                aria-hidden="true"
+                                                class="fa-solid fa-arrow-down"></i></span>
+                                            <input type="number" id="pot_fv_inicial" name="pot_fv_inicial" min="0"
+                                                   step="0.01"
                                                    placeholder="Limite inferior da potência do sistema fotovoltaico"/>
                                         </div>
                                     </div>
                                     <div class="col_half">
-                                        <div class="input_field" data-tip="Limite superior da potência do sistema fotovoltaico"><span><i aria-hidden="true"
-                                                                          class="fa-solid fa-arrow-up"></i></span>
-                                            <input type="number" id="pot_fv_final" name="pot_fv_final" min="0" step="0.01"
+                                        <div class="input_field"
+                                             data-tip="Limite superior da potência do sistema fotovoltaico"><span><i
+                                                aria-hidden="true"
+                                                class="fa-solid fa-arrow-up"></i></span>
+                                            <input type="number" id="pot_fv_final" name="pot_fv_final" min="0"
+                                                   step="0.01"
                                                    placeholder="Limite superior da potência do sistema fotovoltaico"/>
                                         </div>
                                     </div>
