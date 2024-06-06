@@ -1561,6 +1561,10 @@ input:checked + .slider:before {
     transition: color 0.3s ease-in-out; /* Adiciona uma transição suave */
 }
 
+.input_field input.invalid {
+    border: 2px solid red;
+}
+
 /* Definindo a cor verde escuro ao passar o mouse */
 .form_container a:hover {
     color: #4CC75A; /* Verde escuro */

@@ -21,57 +21,203 @@ custoDisponibilidadeInput.placeholder = "Custo de disponibilidade: 100 kWh";
 });
 
 function validateInputs() {
-var selectedOption = document.getElementById('opcao_selecionada').value;
-var errorMessage = document.getElementById('error_message');
+    var selectedOption = document.getElementById('opcao_selecionada').value;
+    var errorMessage = document.getElementById('error_message');
+    var numEletropostos = document.getElementById('num_eletropostos').value;
+    var potEletroposto = document.getElementById('pot_eletroposto').value;
+    var potFV = document.getElementById('pot_fv').value;
+    var showHideFotovoltaico = document.getElementById('show_hide_fotovoltaico');
+    var hasError = false;
+    var errors = new Set();
 
-if (selectedOption == '2') {
-var valorInicial = document.getElementById('valor_recarga_inicial').value;
-var valorFinal = document.getElementById('valor_recarga_final').value;
+    if (numEletropostos === '') {
+        numEletropostos = 1.0;
+    } else {
+        numEletropostos = parseFloat(numEletropostos);
+    }
 
-if (valorInicial !== '' && valorFinal !== '' && parseFloat(valorInicial) < parseFloat(valorFinal)) {
-// Valores válidos
-errorMessage.style.display = 'none';
-errorMessage.textContent = '';
-return true;
-} else {
-// Valores inválidos
-errorMessage.style.display = 'block';
-errorMessage.textContent = 'Por favor, preencha os campos corretamente. O limite inferior do valor da recarga deve ser menor que o limite superior.';
-return false;
-}
-} else if (selectedOption == '3') {
-var valorInicial = document.getElementById('recarga_dia_inicial').value;
-var valorFinal = document.getElementById('recarga_dia_final').value;
+    if (potEletroposto === '') {
+        potEletroposto = 22.0;
+    } else {
+        potEletroposto = parseFloat(potEletroposto);
+    }
 
-if (valorInicial !== '' && valorFinal !== '' && parseFloat(valorInicial) < parseFloat(valorFinal)) {
-// Valores válidos
-errorMessage.style.display = 'none';
-errorMessage.textContent = '';
-return true;
-} else {
-// Valores inválidos
-errorMessage.style.display = 'block';
-errorMessage.textContent = 'Por favor, preencha os campos corretamente. O limite inferior da recarga por dia deve ser menor que o limite superior.';
-return false;
-}
-} else if (selectedOption == '4') {
-var valorInicial = document.getElementById('pot_fv_inicial').value;
-var valorFinal = document.getElementById('pot_fv_final').value;
+    if (numEletropostos * potEletroposto <= 112.5) {
+        var numEletropostosField = document.getElementById('num_eletropostos');
+        numEletropostosField.classList.remove("invalid");
+        var potEletropostoField = document.getElementById('pot_eletroposto');
+        potEletropostoField.classList.remove("invalid");
+    } else {
+        var numEletropostosField = document.getElementById('num_eletropostos');
+        numEletropostosField.classList.add("invalid");
+        var potEletropostoField = document.getElementById('pot_eletroposto');
+        potEletropostoField.classList.add("invalid");
+        hasError = true;
+        errors.add("<li>De acordo com o Sistema de Compensação de Energia Elétrica, a potência máxima para o Grupo B deve ser 112,5 kW.</li>");
+    }
 
-if (valorInicial !== '' && valorFinal !== '' && parseFloat(valorInicial) < parseFloat(valorFinal)) {
-// Valores válidos
-errorMessage.style.display = 'none';
-errorMessage.textContent = '';
-return true;
-} else {
-// Valores inválidos
-errorMessage.style.display = 'block';
-errorMessage.textContent = 'Por favor, preencha os campos corretamente. O limite inferior da potência do sistema fotovoltaico deve ser menor que o limite superior.';
-return false;
+    if (potFV === '') {
+        potFV = 22.0;
+    } else {
+        potFV = parseFloat(potFV);
+    }
+
+    if (potFV <= 112.5) {
+        var potFVField = document.getElementById('pot_fv');
+        potFVField.classList.remove("invalid");
+    } else {
+        if (showHideFotovoltaico.checked) {
+            var potFVField = document.getElementById('pot_fv');
+            potFVField.classList.add("invalid");
+            hasError = true;
+            errors.add("<li>De acordo com o Sistema de Compensação de Energia Elétrica, a potência máxima para o Grupo B deve ser 112,5 kW.</li>");
+        }
+    }
+
+    if (showHideFotovoltaico.checked && numEletropostos * potEletroposto <= 112.5 && potFV <= 112.5 && numEletropostos * potEletroposto + potFV > 112.5) {
+        var numEletropostosField = document.getElementById('num_eletropostos');
+        numEletropostosField.classList.add("invalid");
+        var potEletropostoField = document.getElementById('pot_eletroposto');
+        potEletropostoField.classList.add("invalid");
+        var potFVField = document.getElementById('pot_fv');
+        potFVField.classList.add("invalid");
+        hasError = true;
+        errors.add("<li>De acordo com o Sistema de Compensação de Energia Elétrica, a potência máxima para o Grupo B deve ser 112,5 kW.</li>");
+    } else {
+        if (numEletropostos * potEletroposto <= 112.5) {
+            var numEletropostosField = document.getElementById('num_eletropostos');
+            numEletropostosField.classList.remove("invalid");
+            var potEletropostoField = document.getElementById('pot_eletroposto');
+            potEletropostoField.classList.remove("invalid");
+        }
+        if (potEletroposto <= 112.5) {
+            var potFVField = document.getElementById('pot_fv');
+            potFVField.classList.remove("invalid");
+        }
+    }
+
+    if (selectedOption == '2') {
+        var valorInicial = document.getElementById('valor_recarga_inicial');
+        var valorFinal = document.getElementById('valor_recarga_final');
+
+        if (valorInicial.value == '') {
+            hasError = true;
+            errors.add("<li>O limite inferior do valor da recarga deve ser fornecido.</li>");
+            valorInicial.classList.add("invalid");
+        } else {
+            valorInicial.classList.remove("invalid");
+        }
+
+        if (valorFinal.value == '') {
+            hasError = true;
+            errors.add("<li>O limite superior do valor da recarga deve ser fornecido.</li>");
+            valorFinal.classList.add("invalid");
+        } else {
+            valorFinal.classList.remove("invalid");
+        }
+
+        if (valorInicial.value !== '' && valorFinal.value !== '') {
+            if (parseFloat(valorInicial.value) >= parseFloat(valorFinal.value)) {
+                hasError = true;
+                errors.add("<li>O limite inferior do valor da recarga deve ser menor que o limite superior.</li>");
+                valorInicial.classList.add("invalid");
+                valorFinal.classList.add("invalid");
+            } else {
+                valorInicial.classList.remove("invalid");
+                valorFinal.classList.remove("invalid");
+            }
+        }
+    } else if (selectedOption == '3') {
+        var valorInicial = document.getElementById('recarga_dia_inicial');
+        var valorFinal = document.getElementById('recarga_dia_final');
+
+        if (valorInicial.value == '') {
+            hasError = true;
+            errors.add("<li>O limite inferior da recarga por dia deve ser fornecido.</li>");
+            valorInicial.classList.add("invalid");
+        } else {
+            valorInicial.classList.remove("invalid");
+        }
+
+        if (valorFinal.value == '') {
+            hasError = true;
+            errors.add("<li>O limite superior da recarga por dia deve ser fornecido.</li>");
+            valorFinal.classList.add("invalid");
+        } else {
+            valorFinal.classList.remove("invalid");
+        }
+
+        if (valorInicial.value !== '' && valorFinal.value !== '') {
+            if (parseFloat(valorInicial.value) >= parseFloat(valorFinal.value)) {
+                hasError = true;
+                errors.add("<li>O limite inferior da recarga por dia deve ser menor que o limite superior.</li>");
+                valorInicial.classList.add("invalid");
+                valorFinal.classList.add("invalid");
+            } else {
+                valorInicial.classList.remove("invalid");
+                valorFinal.classList.remove("invalid");
+            }
+        }
+    } else if (selectedOption == '4') {
+        var valorInicial = document.getElementById('pot_fv_inicial');
+        var valorFinal = document.getElementById('pot_fv_final');
+
+        if (valorInicial.value == '') {
+            hasError = true;
+            errors.add("<li>O limite inferior da potência do sistema fotovoltaico deve ser fornecido.</li>");
+            valorInicial.classList.add("invalid");
+        } else {
+            valorInicial.classList.remove("invalid");
+        }
+
+        if (valorFinal.value == '') {
+            hasError = true;
+            errors.add("<li>O limite superior da potência do sistema fotovoltaico deve ser fornecido.</li>");
+            valorFinal.classList.add("invalid");
+        } else {
+            valorFinal.classList.remove("invalid");
+        }
+
+        if (valorInicial.value !== '' && valorFinal.value !== '') {
+            if (parseFloat(valorInicial.value) >= parseFloat(valorFinal.value)) {
+                hasError = true;
+                errors.add("<li>O limite inferior da potência do sistema fotovoltaico deve ser menor que o limite superior.</li>");
+                if (parseFloat(valorFinal.value) > 112.5) {
+                     errors.add("<li>De acordo com o Sistema de Compensação de Energia Elétrica, a potência máxima para o Grupo B deve ser 112,5 kW.</li>")
+                }
+                valorInicial.classList.add("invalid");
+                valorFinal.classList.add("invalid");
+            } else {
+                valorInicial.classList.remove("invalid");
+                valorFinal.classList.remove("invalid");
+            }
+        }
+
+        if (valorFinal.value !== '') {
+            if (parseFloat(valorFinal.value) > 112.5) {
+                hasError = true;
+                errors.add("<li>De acordo com o Sistema de Compensação de Energia Elétrica, a potência máxima para o Grupo B deve ser 112,5 kW.</li>")
+                valorFinal.classList.add("invalid");
+            } else {
+                valorFinal.classList.remove("invalid");
+            }
+        }
+    }
+
+    if (hasError) {
+        var errorString = "Por favor, preencha os campos corretamente:<ul>";
+        errors.forEach(error => { errorString = errorString + error; });
+        errorString = errorString + "</ul>";
+        errorMessage.style.display = 'block';
+        errorMessage.innerHTML = errorString;
+        return false;
+    } else {
+        errorMessage.style.display = 'none';
+        errorMessage.innerHTML = '';
+        return true;
+    }
 }
-}
-return true;  // Permitir o envio do formulário para outras opções
-}
+
 
 function showHiddeField() {
 var option = document.getElementById('opcao_selecionada').value;
@@ -163,7 +309,8 @@ sem_financiamento.style.display = 'block';
                                     <div class="input_field" data-tip="Número de eletropostos"><span><i
                                             aria-hidden="true"
                                             class="fas fa-gas-pump"></i></span>
-                                        <input type="number" name="num_eletropostos" min="1" step="1"
+                                        <input type="number" id="num_eletropostos" name="num_eletropostos" min="1"
+                                               step="1"
                                                placeholder="Número de eletropostos - Default: 1"/>
                                     </div>
                                 </div>
@@ -171,7 +318,8 @@ sem_financiamento.style.display = 'block';
                                     <div class="input_field" data-tip="Potência do eletroposto (kW)"><span><i
                                             aria-hidden="true"
                                             class="fa-solid fa-bolt"></i></span>
-                                        <input type="number" min="0" name="pot_eletroposto" step=".1"
+                                        <input type="number" min="0" id="pot_eletroposto" name="pot_eletroposto"
+                                               step=".1"
                                                placeholder="Potência do eletroposto (kW) - Default: 22 kW"/>
                                     </div>
                                 </div>
@@ -199,8 +347,8 @@ sem_financiamento.style.display = 'block';
                                         <div class="input_field" data-tip="Potência do sistema fotovoltaico (kW)"><span><i
                                                 aria-hidden="true"
                                                 class="fa-solid fa-solar-panel"></i></span>
-                                            <input type="number" name="pot_fv" min="0" step=".1"
-                                                   placeholder="Potência do sistema fotovoltaico (kW) - Default: 125 kW"/>
+                                            <input type="number" id="pot_fv" name="pot_fv" min="0" step=".1"
+                                                   placeholder="Potência do sistema fotovoltaico (kW) - Default: 22 kW"/>
                                         </div>
                                     </div>
                                     <div class="col_half">

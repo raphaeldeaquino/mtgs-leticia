@@ -20,7 +20,7 @@ def index():
         # Dados sistema fotovoltaico
 
         # Potência do sistema fotovoltaico (kW)
-        pot_fv = int(request.form.get('pot_fv')) if request.form.get('pot_fv') else 125
+        pot_fv = int(request.form.get('pot_fv')) if request.form.get('pot_fv') else 22
 
         # Zomer (2014) - Horas de irradiação solar média por dia (irradiância kWh/m2.dia Cresesb dividido por 1kW/m2
         # que é a irradiância de referência)
