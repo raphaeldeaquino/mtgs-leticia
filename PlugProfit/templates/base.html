@@ -46,9 +46,6 @@
     {% if active_page != 'index' %}
     <a href="/"><img src="{{url_for('static', filename='img/logo.png')}}"></a>
     {% endif %}
-    <button class="mobile-nav-toggle d-lg-none">
-        <i class="bi bi-list"></i>
-    </button>
     <nav id="navbar" class="navbar nav-menu">
         <ul>
             {% for href, id, caption, icon in navigation_bar %}
@@ -56,8 +53,17 @@
     %}"><i class="bx {{ icon|e }}"></i> <span>{{ caption|e }}</span></a></li>
             {% endfor %}
         </ul>
-    </nav><!-- .nav-menu -->
+    </nav>
 </header><!-- End Header -->
+
+<nav id="navbar-mobile" class="nav-menu">
+        <ul>
+            {% for href, id, caption, icon in navigation_bar %}
+            <li><a href="{{ href|e }}" class="nav-link scrollto {% if id == active_page %} active{% endif
+    %}"><i class="bx {{ icon|e }}"></i> <span>{{ caption|e }}</span></a></li>
+            {% endfor %}
+        </ul>
+    </nav>
 
 <!-- Inclua o Chart.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>

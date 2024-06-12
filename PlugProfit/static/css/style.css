@@ -274,6 +274,18 @@ h6 {
   background-color: #2f9e41;
 }
 
+@media (max-width: 991px) {
+    #navbar-mobile {
+        display: block;
+    }
+}
+
+@media (min-width: 992px) {
+    #navbar-mobile {
+        display: none; /* Esconde o menu em telas maiores */
+    }
+}
+
 @media (min-width: 992px) {
   #hero {
     padding-left: 160px;
