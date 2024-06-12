@@ -11,7 +11,8 @@
     <link href="{{url_for('static', filename='img/apple-touch-icon.png')}}" rel="apple-touch-icon">
 
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+          rel="stylesheet">
 
     <!-- Vendor CSS Files -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
@@ -25,49 +26,65 @@
     <!-- Template Main CSS File -->
     <link href="{{url_for('static', filename='css/style.css')}}" rel="stylesheet">
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/dataTables.bootstrap5.css">
 
 </head>
 <body>
-    <i class="bi bi-list mobile-nav-toggle d-lg-none"></i>
+{% set navigation_bar = [
+('/', 'index', 'Home', 'bx-home'),
+('/sobre', 'about', 'Sobre', 'bx-user'),
+('/viabilidade', 'viability', 'Análise de viabilidade', 'bx-money'),
+('/contato', 'contact', 'Contato', 'bx-envelope')
+] -%}
 
-    {% set navigation_bar = [
-    ('/', 'index', 'Home', 'bx-home'),
-    ('/sobre', 'about', 'Sobre', 'bx-user'),
-    ('/viabilidade', 'viability', 'Análise de viabilidade', 'bx-money'),
-    ('/contato', 'contact', 'Contato', 'bx-envelope')
-    ] -%}
+{% set active_page = active_page|default('index') -%}
 
-    {% set active_page = active_page|default('index') -%}
-
-    <!-- ======= Header ======= -->
-    <header id="header" class="d-flex flex-column justify-content-center">
-        {% if active_page != 'index' %}
-        <a href="/"><img src="{{url_for('static', filename='img/logo.png')}}"></a>
-        {% endif %}
-        <nav id="navbar" class="navbar nav-menu">
-            <ul>
-                {% for href, id, caption, icon in navigation_bar %}
-                <li><a href="{{ href|e }}" class="nav-link scrollto {% if id == active_page %} active{% endif
+<!-- ======= Header ======= -->
+<header id="header" class="d-flex flex-column justify-content-center">
+    {% if active_page != 'index' %}
+    <a href="/"><img src="{{url_for('static', filename='img/logo.png')}}"></a>
+    {% endif %}
+    <button class="mobile-nav-toggle d-lg-none">
+        <i class="bi bi-list"></i>
+    </button>
+    <nav id="navbar" class="navbar nav-menu">
+        <ul>
+            {% for href, id, caption, icon in navigation_bar %}
+            <li><a href="{{ href|e }}" class="nav-link scrollto {% if id == active_page %} active{% endif
     %}"><i class="bx {{ icon|e }}"></i> <span>{{ caption|e }}</span></a></li>
-                {% endfor %}
-            </ul>
-        </nav><!-- .nav-menu -->
-    </header><!-- End Header -->
+            {% endfor %}
+        </ul>
+    </nav><!-- .nav-menu -->
+</header><!-- End Header -->
 
-    <!-- Inclua o Chart.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
-    <!-- Inclua o plugin Chart.js datalabels -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.0.0/chartjs-plugin-datalabels.min.js"></script>
-    <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"></script>
-    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap5.js"></script>
+<!-- Inclua o Chart.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+<!-- Inclua o plugin Chart.js datalabels -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.0.0/chartjs-plugin-datalabels.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"></script>
+<script type="text/javascript" charset="utf8"
+        src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap5.js"></script>
 
-    {% block content %} {% endblock %}
+{% block content %} {% endblock %}
 
-    <script>
+<script>
     {% block script %} {% endblock %}
-    </script>
+
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const navToggle = document.querySelector('.mobile-nav-toggle');
+    const navMenu = document.querySelector('.nav-menu');
+
+    navToggle.addEventListener('click', function() {
+        navMenu.classList.toggle('mobile-nav-active');
+    });
+});
+
+</script>
 </body>
 </html>
