@@ -1,5 +1,5 @@
-
 def calcular_fatura_4(geracao, consumo, tarifas, tusds, fator_simult, custo_disponibilidade):
+    # Inicializa listas para os cálculos
     abatimento = [0] * len(geracao)
     credito_mensal = [0] * len(geracao)
     credito_e_geracao = [0] * len(geracao)
@@ -9,7 +9,9 @@ def calcular_fatura_4(geracao, consumo, tarifas, tusds, fator_simult, custo_disp
     energia_injetada = [0] * len(geracao)
     faturas = []
 
+    # Loop de cálculos mensais
     for i in range(len(geracao)):
+
         if geracao[i] >= consumo[i]:
             consumo_simultaneo[i] = consumo[i] * fator_simult
         else:
@@ -20,8 +22,8 @@ def calcular_fatura_4(geracao, consumo, tarifas, tusds, fator_simult, custo_disp
         credito_mensal[i] = energia_injetada[i]
 
         if i >= 6:
-            credito_mensal[i-6] = 0
-        credito_e_geracao[i] = energia_injetada[i] + sum(credito_mensal[:i+1])
+            credito_mensal[i - 6] = 0
+        credito_e_geracao[i] = sum(credito_mensal[:i + 1])
 
         if consumo_nao_simultaneo[i] <= custo_disponibilidade:
             abatimento_maximo[i] = 0
@@ -29,22 +31,22 @@ def calcular_fatura_4(geracao, consumo, tarifas, tusds, fator_simult, custo_disp
             abatimento_maximo[i] = consumo_nao_simultaneo[i] - custo_disponibilidade
 
         if sum(credito_mensal) >= abatimento_maximo[i]:
+            # Verifica quantos periodos de creditos serão utilizados e atualiza o credito da ultima posição utilizada
             soma = 0
             u = 0
             while soma < abatimento_maximo[i]:
                 u += 1
-                soma += credito_mensal[u-1]
-            credito_mensal[u-1] = sum(credito_mensal[:u]) - abatimento_maximo[i]
+                soma += credito_mensal[u - 1]
+            credito_mensal[u - 1] = sum(credito_mensal[:u]) - abatimento_maximo[i]
+
+            # Limpa os creditos utilizados
             for j in range(u - 1):
                 credito_mensal[j] = 0
             abatimento[i] = abatimento_maximo[i]
-        elif credito_e_geracao[i] >= abatimento_maximo[i]:
-            credito_mensal[:i] = [0] * i
-            credito_mensal[i] = credito_e_geracao[i] - abatimento_maximo[i]
-            abatimento[i] = abatimento_maximo[i]
+
         else:
-            abatimento[i] = credito_e_geracao[i]
-            credito_mensal[:i+1] = [0] * (i+1)
+            abatimento[i] = sum(credito_mensal)
+            credito_mensal = [0] * len(credito_mensal)
 
         fatura = (consumo_nao_simultaneo[i] - abatimento[i]) * tarifas[i] + abatimento[i] * tusds[i]
         faturas.append(fatura)
